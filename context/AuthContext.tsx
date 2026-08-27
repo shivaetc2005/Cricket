@@ -10,13 +10,19 @@ export interface Profile {
   avatar_url: string | null;
 }
 
+interface SignUpResult {
+  error: any;
+  user: User | null;
+  session: Session | null;
+}
+
 interface AuthContextType {
   session: Session | null;
   user: User | null;
   profile: Profile | null;
   loading: boolean;
   signIn: (email: string, pass: string) => Promise<{ error: any }>;
-  signUp: (name: string, email: string, pass: string, phone?: string) => Promise<{ error: any }>;
+  signUp: (name: string, email: string, pass: string, phone?: string) => Promise<SignUpResult>;
   signOut: () => Promise<void>;
   refreshProfile: () => Promise<void>;
 }
@@ -27,7 +33,7 @@ const AuthContext = createContext<AuthContextType>({
   profile: null,
   loading: true,
   signIn: async () => ({ error: null }),
-  signUp: async () => ({ error: null }),
+  signUp: async () => ({ error: null, user: null, session: null }),
   signOut: async () => {},
   refreshProfile: async () => {},
 });
@@ -49,7 +55,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       if (!error && data) {
         setProfile(data);
       } else {
-        // Fallback profile if trigger hasn't fired yet or missing
         setProfile({
           id: userId,
           name: user?.user_metadata?.name || user?.email?.split('@')[0] || 'Player',
@@ -102,7 +107,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     return { error };
   };
 
-  const signUp = async (name: string, email: string, pass: string, phone?: string) => {
+  const signUp = async (name: string, email: string, pass: string, phone?: string): Promise<SignUpResult> => {
     setLoading(true);
     const { data, error } = await supabase.auth.signUp({
       email,
@@ -116,20 +121,21 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     });
 
     if (!error && data.user) {
-      // Upsert profile in case DB trigger isn't setup
       try {
         await supabase.from('profiles').upsert({
           id: data.user.id,
           name,
           phone: phone || null,
         });
-        await fetchProfile(data.user.id);
+        if (data.session) {
+          await fetchProfile(data.user.id);
+        }
       } catch (err) {
         console.warn('Profile upsert notice:', err);
       }
     }
     setLoading(false);
-    return { error };
+    return { error, user: data?.user || null, session: data?.session || null };
   };
 
   const signOut = async () => {

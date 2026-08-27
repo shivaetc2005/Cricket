@@ -11,17 +11,20 @@ import {
   ScrollView,
   SafeAreaView,
 } from 'react-native';
-import { Link } from 'expo-router';
+import { Link, useRouter } from 'expo-router';
 import { useAuth } from '../../context/AuthContext';
 
 export default function RegisterScreen() {
   const { signUp } = useAuth();
+  const router = useRouter();
+
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [phone, setPhone] = useState('');
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const [successMsg, setSuccessMsg] = useState<string | null>(null);
 
   const handleRegister = async () => {
     if (!name.trim()) {
@@ -38,12 +41,19 @@ export default function RegisterScreen() {
     }
 
     setErrorMsg(null);
+    setSuccessMsg(null);
     setLoading(true);
-    const { error } = await signUp(name.trim(), email.trim(), password, phone.trim());
+    const { error, user, session } = await signUp(name.trim(), email.trim(), password, phone.trim());
     setLoading(false);
 
     if (error) {
       setErrorMsg(error.message || 'Registration failed. Please try again.');
+    } else if (user && !session) {
+      // Supabase Email confirmation enabled
+      setSuccessMsg('Account created successfully! 📧 Please check your email inbox to confirm your email before signing in.');
+    } else if (user && session) {
+      // Auto signed-in
+      router.replace('/(tabs)');
     }
   };
 
@@ -62,6 +72,12 @@ export default function RegisterScreen() {
           {errorMsg ? (
             <View style={styles.errorBox}>
               <Text style={styles.errorText}>⚠️ {errorMsg}</Text>
+            </View>
+          ) : null}
+
+          {successMsg ? (
+            <View style={styles.successBox}>
+              <Text style={styles.successText}>{successMsg}</Text>
             </View>
           ) : null}
 
@@ -203,6 +219,20 @@ const styles = StyleSheet.create({
     color: '#FCA5A5',
     fontSize: 13,
     fontWeight: '500',
+  },
+  successBox: {
+    backgroundColor: '#064E3B',
+    borderWidth: 1,
+    borderColor: '#10B981',
+    borderRadius: 12,
+    padding: 14,
+    marginBottom: 20,
+  },
+  successText: {
+    color: '#34D399',
+    fontSize: 13,
+    fontWeight: '600',
+    lineHeight: 18,
   },
   primaryButton: {
     backgroundColor: '#10B981',
