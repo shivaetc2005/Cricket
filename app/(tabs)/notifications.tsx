@@ -6,10 +6,10 @@ import {
   TouchableOpacity,
   FlatList,
   ActivityIndicator,
-  SafeAreaView,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
-import * as Notifications from 'expo-notifications';
+import Constants, { ExecutionEnvironment } from 'expo-constants';
 import { useAuth } from '../../context/AuthContext';
 import { supabase } from '../../lib/supabase';
 import { Ionicons } from '@expo/vector-icons';
@@ -64,6 +64,17 @@ export default function NotificationsScreen() {
 
   const registerPushToken = async () => {
     try {
+      // Android remote push notifications were removed from Expo Go in SDK 53
+      const isExpoGo =
+        Constants.appOwnership === 'expo' ||
+        Constants.executionEnvironment === ExecutionEnvironment.StoreClient;
+
+      if (isExpoGo) {
+        console.log('Push notifications are not supported in Expo Go (SDK 53+). Skipping registration.');
+        return;
+      }
+
+      const Notifications = require('expo-notifications');
       const { status: existingStatus } = await Notifications.getPermissionsAsync();
       let finalStatus = existingStatus;
       if (existingStatus !== 'granted') {

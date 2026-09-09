@@ -8,8 +8,8 @@ import {
   TextInput,
   ActivityIndicator,
   Alert,
-  SafeAreaView,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useAuth } from '../../context/AuthContext';
 import { supabase } from '../../lib/supabase';
 
@@ -82,18 +82,45 @@ export default function ProfileScreen() {
     if (!user?.id) return;
     setSaving(true);
     try {
-      const { error } = await supabase
-        .from('profiles')
-        .upsert({
-          id: user.id,
-          name: name.trim(),
-          phone: phone.trim() || null,
-          skill_level: skillLevel,
-          avatar_url: avatarUrl.trim() || null,
-        });
+      const payload: Record<string, any> = {
+        name: name.trim(),
+        phone: phone.trim() || null,
+        skill_level: skillLevel,
+        avatar_url: avatarUrl.trim() || null,
+      };
 
-      if (error) {
-        Alert.alert('Error', error.message);
+      // 1. Check if profile row exists for this user
+      const { data: existingProfile } = await supabase
+        .from('profiles')
+        .select('id')
+        .eq('id', user.id)
+        .maybeSingle();
+
+      let errorToReport: any = null;
+
+      if (existingProfile) {
+        // 2. Perform direct UPDATE on existing profile
+        const { error } = await supabase
+          .from('profiles')
+          .update(payload)
+          .eq('id', user.id);
+
+        errorToReport = error;
+      } else {
+        // 3. Perform direct INSERT if profile row doesn't exist
+        const { error } = await supabase
+          .from('profiles')
+          .insert({
+            id: user.id,
+            ...payload,
+          });
+
+        errorToReport = error;
+      }
+
+      if (errorToReport) {
+        console.error('Profile save error:', errorToReport);
+        Alert.alert('Profile Error', errorToReport.message || 'Could not save profile changes.');
       } else {
         await refreshProfile();
         setIsEditing(false);

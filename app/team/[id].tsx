@@ -9,9 +9,9 @@ import {
   ActivityIndicator,
   Alert,
   Modal,
-  SafeAreaView,
   FlatList,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useLocalSearchParams, useRouter, Stack } from 'expo-router';
 import { useAuth } from '../../context/AuthContext';
 import { supabase } from '../../lib/supabase';

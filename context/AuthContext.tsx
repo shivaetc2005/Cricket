@@ -23,6 +23,7 @@ interface AuthContextType {
   loading: boolean;
   signIn: (email: string, pass: string) => Promise<{ error: any }>;
   signUp: (name: string, email: string, pass: string, phone?: string) => Promise<SignUpResult>;
+  resetPassword: (email: string) => Promise<{ error: any }>;
   signOut: () => Promise<void>;
   refreshProfile: () => Promise<void>;
 }
@@ -34,6 +35,7 @@ const AuthContext = createContext<AuthContextType>({
   loading: true,
   signIn: async () => ({ error: null }),
   signUp: async () => ({ error: null, user: null, session: null }),
+  resetPassword: async () => ({ error: null }),
   signOut: async () => {},
   refreshProfile: async () => {},
 });
@@ -95,7 +97,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   }, []);
 
   const signIn = async (email: string, pass: string) => {
-    setLoading(true);
     const { error, data } = await supabase.auth.signInWithPassword({
       email,
       password: pass,
@@ -103,12 +104,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     if (data?.user) {
       await fetchProfile(data.user.id);
     }
-    setLoading(false);
     return { error };
   };
 
   const signUp = async (name: string, email: string, pass: string, phone?: string): Promise<SignUpResult> => {
-    setLoading(true);
     const { data, error } = await supabase.auth.signUp({
       email,
       password: pass,
@@ -134,8 +133,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         console.warn('Profile upsert notice:', err);
       }
     }
-    setLoading(false);
     return { error, user: data?.user || null, session: data?.session || null };
+  };
+
+  const resetPassword = async (email: string) => {
+    const { error } = await supabase.auth.resetPasswordForEmail(email.trim());
+    return { error };
   };
 
   const signOut = async () => {
@@ -162,6 +165,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         loading,
         signIn,
         signUp,
+        resetPassword,
         signOut,
         refreshProfile,
       }}
