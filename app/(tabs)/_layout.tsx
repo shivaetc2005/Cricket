@@ -28,7 +28,7 @@ export default function TabLayout() {
         name="index"
         options={{
           title: 'Explore',
-          headerTitle: '🏏 Nearby Teams (2km)',
+          headerTitle: '🏏 Nearby Teams (3km)',
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="location-outline" size={size || 22} color={color} />
           ),

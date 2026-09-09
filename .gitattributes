@@ -1,2 +1,13 @@
-# Set default behavior to handle line endings automatically
-* text=auto
+# Enforce consistent line endings
+* text=auto eol=lf
+
+# Binary files
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.ttf binary
+*.otf binary
+*.woff binary
+*.woff2 binary

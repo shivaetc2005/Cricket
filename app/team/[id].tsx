@@ -1,21 +1,21 @@
-import React, { useEffect, useState } from 'react';
+import { Ionicons } from '@expo/vector-icons';
+import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
+import { useEffect, useState } from 'react';
 import {
-  StyleSheet,
-  Text,
-  View,
-  TouchableOpacity,
-  ScrollView,
-  TextInput,
   ActivityIndicator,
   Alert,
-  Modal,
   FlatList,
+  Modal,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useLocalSearchParams, useRouter, Stack } from 'expo-router';
 import { useAuth } from '../../context/AuthContext';
 import { supabase } from '../../lib/supabase';
-import { Ionicons } from '@expo/vector-icons';
 
 interface MemberProfile {
   id: string;
@@ -378,7 +378,7 @@ export default function TeamDetailScreen() {
               </View>
               <View style={{ flex: 1, marginLeft: 12 }}>
                 <Text style={styles.memberName}>{m.name}</Text>
-                <Text style={styles.memberSkill}>⚡ {m.skill_level || 'Player'}</Text>
+                <Text style={styles.memberSkill}>⚡ {m.skill_level ? (m.skill_level.toLowerCase() === 'semi-pro' ? 'Semi-Pro' : m.skill_level.charAt(0).toUpperCase() + m.skill_level.slice(1).toLowerCase()) : 'Player'}</Text>
               </View>
               {m.id === team.captain_id && (
                 <View style={styles.captainTag}>

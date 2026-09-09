@@ -61,7 +61,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           id: userId,
           name: user?.user_metadata?.name || user?.email?.split('@')[0] || 'Player',
           phone: user?.user_metadata?.phone || null,
-          skill_level: 'Intermediate',
+          skill_level: 'intermediate',
           avatar_url: null,
         });
       }
@@ -71,14 +71,20 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      setUser(session?.user ?? null);
-      if (session?.user) {
-        fetchProfile(session.user.id);
-      }
-      setLoading(false);
-    });
+    supabase.auth.getSession()
+      .then(({ data }) => {
+        const session = data?.session ?? null;
+        setSession(session);
+        setUser(session?.user ?? null);
+        if (session?.user) {
+          fetchProfile(session.user.id);
+        }
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.warn('Supabase getSession network/auth notice:', err?.message || err);
+        setLoading(false);
+      });
 
     const { data: authListener } = supabase.auth.onAuthStateChange(async (_event, session) => {
       setSession(session);

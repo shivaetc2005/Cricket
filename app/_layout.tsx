@@ -1,8 +1,12 @@
-import React, { useEffect } from 'react';
-import { ActivityIndicator, View, StyleSheet } from 'react-native';
-import { DarkTheme, ThemeProvider, Stack, useRouter, useSegments } from 'expo-router';
-import { AuthProvider, useAuth } from '../context/AuthContext';
+import { Stack, ThemeProvider, useRouter, useSegments } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
+import { useEffect } from 'react';
+import { ActivityIndicator, StyleSheet, View } from 'react-native';
+import { AuthProvider, useAuth } from '../context/AuthContext';
+import { ClassicTheme } from '../theme/classicTheme';
+import { Colors } from '../theme/colors';
+
+
 
 SplashScreen.preventAutoHideAsync();
 
@@ -17,10 +21,8 @@ function InitialLayout() {
     const inAuthGroup = segments[0] === '(auth)';
 
     if (!session && !inAuthGroup) {
-      // Redirect to login if user is not signed in
       router.replace('/(auth)/login');
     } else if (session && inAuthGroup) {
-      // Redirect to main tabs if signed in
       router.replace('/(tabs)');
     }
     SplashScreen.hideAsync();
@@ -35,7 +37,7 @@ function InitialLayout() {
   }
 
   return (
-    <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: '#090D16' } }}>
+    <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: Colors.background } }}>
       <Stack.Screen name="(auth)" options={{ headerShown: false }} />
       <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
       <Stack.Screen name="modal" options={{ presentation: 'modal' }} />
@@ -46,7 +48,7 @@ function InitialLayout() {
 export default function RootLayout() {
   return (
     <AuthProvider>
-      <ThemeProvider value={DarkTheme}>
+      <ThemeProvider value={ClassicTheme}>
         <InitialLayout />
       </ThemeProvider>
     </AuthProvider>
@@ -56,7 +58,7 @@ export default function RootLayout() {
 const styles = StyleSheet.create({
   loadingContainer: {
     flex: 1,
-    backgroundColor: '#090D16',
+    backgroundColor: Colors.background,
     justifyContent: 'center',
     alignItems: 'center',
   },

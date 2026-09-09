@@ -1,17 +1,18 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
-  StyleSheet,
-  Text,
-  View,
-  TouchableOpacity,
-  ScrollView,
-  TextInput,
   ActivityIndicator,
   Alert,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useAuth } from '../../context/AuthContext';
 import { supabase } from '../../lib/supabase';
+import { Colors } from '../../theme/colors';
 
 interface UserTeamRole {
   team_id: string;
@@ -19,12 +20,18 @@ interface UserTeamRole {
   role: 'Captain' | 'Member';
 }
 
+const formatSkillLevel = (lvl?: string | null) => {
+  if (!lvl) return 'Intermediate';
+  if (lvl.toLowerCase() === 'semi-pro') return 'Semi-Pro';
+  return lvl.charAt(0).toUpperCase() + lvl.slice(1).toLowerCase();
+};
+
 export default function ProfileScreen() {
   const { user, profile, refreshProfile, signOut } = useAuth();
 
   const [name, setName] = useState(profile?.name || '');
   const [phone, setPhone] = useState(profile?.phone || '');
-  const [skillLevel, setSkillLevel] = useState(profile?.skill_level || 'Intermediate');
+  const [skillLevel, setSkillLevel] = useState(formatSkillLevel(profile?.skill_level));
   const [avatarUrl, setAvatarUrl] = useState(profile?.avatar_url || '');
 
   const [saving, setSaving] = useState(false);
@@ -36,7 +43,7 @@ export default function ProfileScreen() {
     if (profile) {
       setName(profile.name || '');
       setPhone(profile.phone || '');
-      setSkillLevel(profile.skill_level || 'Intermediate');
+      setSkillLevel(formatSkillLevel(profile.skill_level));
       setAvatarUrl(profile.avatar_url || '');
     }
   }, [profile]);
@@ -85,7 +92,7 @@ export default function ProfileScreen() {
       const payload: Record<string, any> = {
         name: name.trim(),
         phone: phone.trim() || null,
-        skill_level: skillLevel,
+        skill_level: skillLevel.toLowerCase(),
         avatar_url: avatarUrl.trim() || null,
       };
 
@@ -221,7 +228,7 @@ export default function ProfileScreen() {
               <View style={styles.infoRow}>
                 <Text style={styles.infoLabel}>Skill Level</Text>
                 <View style={styles.badgeSkill}>
-                  <Text style={styles.badgeSkillText}>{profile?.skill_level || 'Intermediate'}</Text>
+                  <Text style={styles.badgeSkillText}>{formatSkillLevel(profile?.skill_level)}</Text>
                 </View>
               </View>
             </View>
@@ -269,7 +276,7 @@ export default function ProfileScreen() {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: '#090D16',
+    backgroundColor: Colors.background,
   },
   container: {
     padding: 20,
@@ -283,7 +290,7 @@ const styles = StyleSheet.create({
     width: 84,
     height: 84,
     borderRadius: 42,
-    backgroundColor: '#064E3B',
+    backgroundColor: Colors.background,
     borderWidth: 2,
     borderColor: '#10B981',
     alignItems: 'center',
@@ -337,7 +344,7 @@ const styles = StyleSheet.create({
     marginBottom: 6,
   },
   input: {
-    backgroundColor: '#0F172A',
+    backgroundColor: Colors.background,
     borderWidth: 1,
     borderColor: '#334155',
     borderRadius: 10,
@@ -354,7 +361,7 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   skillChip: {
-    backgroundColor: '#0F172A',
+    backgroundColor: Colors.background,
     borderWidth: 1,
     borderColor: '#334155',
     borderRadius: 20,
@@ -409,7 +416,7 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   badgeSkill: {
-    backgroundColor: '#064E3B',
+    backgroundColor: Colors.background,
     paddingHorizontal: 10,
     paddingVertical: 4,
     borderRadius: 12,
@@ -462,7 +469,7 @@ const styles = StyleSheet.create({
     marginTop: 8,
   },
   signOutButton: {
-    backgroundColor: '#334155',
+    backgroundColor: Colors.background,
     borderRadius: 12,
     paddingVertical: 16,
     alignItems: 'center',
@@ -470,7 +477,7 @@ const styles = StyleSheet.create({
     marginBottom: 30,
   },
   signOutText: {
-    color: '#FCA5A5',
+    color: Colors.text,
     fontWeight: '700',
     fontSize: 15,
   },

@@ -1,18 +1,17 @@
-import React, { useEffect, useState } from 'react';
+import { Ionicons } from '@expo/vector-icons';
+import * as Location from 'expo-location';
+import { useRouter } from 'expo-router';
+import { useEffect, useState } from 'react';
 import {
+  ActivityIndicator,
+  FlatList,
   StyleSheet,
   Text,
-  View,
   TouchableOpacity,
-  FlatList,
-  ActivityIndicator,
-  Alert,
+  View
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useRouter } from 'expo-router';
-import * as Location from 'expo-location';
 import { supabase } from '../../lib/supabase';
-import { Ionicons } from '@expo/vector-icons';
 
 interface NearbyTeam {
   id: string;
@@ -24,14 +23,17 @@ interface NearbyTeam {
   location?: any;
 }
 
+const SEARCH_RADIUS_METERS = 3000; // Fixed 3km radius
+
 export default function ExploreScreen() {
   const router = useRouter();
 
   const [location, setLocation] = useState<{ lat: number; lng: number } | null>(null);
+  const [locationName, setLocationName] = useState<string | null>(null);
+  const [loadingLocationName, setLoadingLocationName] = useState(false);
   const [teams, setTeams] = useState<NearbyTeam[]>([]);
   const [loading, setLoading] = useState(true);
   const [permissionDenied, setPermissionDenied] = useState(false);
-  const [radius, setRadius] = useState(2000); // 2km default
 
   useEffect(() => {
     initLocation();
@@ -40,8 +42,9 @@ export default function ExploreScreen() {
   useEffect(() => {
     if (location) {
       fetchNearbyTeams();
+      fetchLocationName(location.lat, location.lng);
     }
-  }, [location, radius]);
+  }, [location]);
 
   useEffect(() => {
     // Realtime subscription on `teams` table
@@ -62,6 +65,62 @@ export default function ExploreScreen() {
       supabase.removeChannel(channel);
     };
   }, [location]);
+
+  const fetchLocationName = async (lat: number, lng: number) => {
+    setLoadingLocationName(true);
+    try {
+      // 1. Try Expo Location reverseGeocodeAsync
+      const geocoded = await Location.reverseGeocodeAsync({ latitude: lat, longitude: lng });
+      if (geocoded && geocoded.length > 0) {
+        const addr = geocoded[0];
+        const area = addr.district || addr.subregion || addr.name || addr.street;
+        const city = addr.city || addr.region || addr.country;
+        const placeParts = Array.from(new Set([area, city].filter(Boolean)));
+        if (placeParts.length > 0) {
+          setLocationName(placeParts.slice(0, 2).join(', '));
+          return;
+        }
+      }
+
+      // 2. OpenStreetMap (Nominatim API) fallback
+      const response = await fetch(
+        `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`,
+        {
+          headers: {
+            'User-Agent': 'CricketApp/1.0',
+          },
+        }
+      );
+      if (response.ok) {
+        const data = await response.json();
+        const address = data?.address;
+        if (address) {
+          const area =
+            address.suburb ||
+            address.neighbourhood ||
+            address.quarter ||
+            address.district ||
+            address.city ||
+            address.town ||
+            address.village ||
+            address.county;
+          const city = address.city || address.state || address.country;
+          const parts = Array.from(new Set([area, city].filter(Boolean)));
+          if (parts.length > 0) {
+            setLocationName(parts.join(', '));
+            return;
+          }
+        }
+      }
+
+      setLocationName(`${lat.toFixed(2)}°, ${lng.toFixed(2)}°`);
+    } catch (err) {
+      console.warn('Reverse geocoding error:', err);
+      setLocationName(`${lat.toFixed(2)}°, ${lng.toFixed(2)}°`);
+    } finally {
+      setLoadingLocationName(false);
+    }
+  };
 
   const initLocation = async () => {
     setLoading(true);
@@ -96,11 +155,12 @@ export default function ExploreScreen() {
       const { data: rpcData, error: rpcErr } = await supabase.rpc('nearby_teams', {
         user_lat: location.lat,
         user_lng: location.lng,
-        radius_meters: radius,
+        radius_meters: SEARCH_RADIUS_METERS,
       });
 
       if (!rpcErr && rpcData) {
-        setTeams(rpcData);
+        const withinRange = rpcData.filter((t: any) => (t.dist_meters ?? 0) <= SEARCH_RADIUS_METERS);
+        setTeams(withinRange);
       } else {
         // Fallback standard query on active teams
         const { data: allTeams, error: fallbackErr } = await supabase
@@ -111,11 +171,14 @@ export default function ExploreScreen() {
         if (fallbackErr) throw fallbackErr;
 
         if (allTeams) {
-          const parsed = allTeams.map((t: any) => ({
-            ...t,
-            available_days: Array.isArray(t.available_days) ? t.available_days : [],
-            dist_meters: Math.floor(Math.random() * 1200) + 100, // mock distance if RPC missing
-          }));
+          const parsed = allTeams
+            .map((t: any, index: number) => ({
+              ...t,
+              available_days: Array.isArray(t.available_days) ? t.available_days : [],
+              dist_meters: t.dist_meters ?? Math.floor(((index + 1) * 750) % 2800) + 150, // mock distance within 3km
+            }))
+            .filter((t: any) => t.dist_meters <= SEARCH_RADIUS_METERS);
+
           setTeams(parsed);
         }
       }
@@ -127,7 +190,7 @@ export default function ExploreScreen() {
   };
 
   const formatDistance = (meters?: number) => {
-    if (!meters && meters !== 0) return 'Nearby';
+    if (!meters && meters !== 0) return 'Within 3km';
     if (meters < 1000) return `${Math.round(meters)}m away`;
     return `${(meters / 1000).toFixed(1)}km away`;
   };
@@ -138,16 +201,18 @@ export default function ExploreScreen() {
         {/* Radius & Location Banner */}
         <View style={styles.banner}>
           <View style={{ flex: 1 }}>
-            <Text style={styles.bannerTitle}>📍 Searching within {(radius / 1000).toFixed(0)}km</Text>
+            <Text style={styles.bannerTitle}>📍 Searching within 3km radius</Text>
             <Text style={styles.bannerSub}>
               {permissionDenied
                 ? 'Location permission denied. Showing default region.'
-                : location
-                ? `GPS: ${location.lat.toFixed(3)}, ${location.lng.toFixed(3)}`
-                : 'Acquiring GPS signal...'}
+                : loadingLocationName
+                  ? 'Resolving area location...'
+                  : locationName
+                    ? `${locationName}`
+                    : 'Acquiring GPS signal...'}
             </Text>
           </View>
-          <TouchableOpacity style={styles.refreshBtn} onPress={fetchNearbyTeams}>
+          <TouchableOpacity style={styles.refreshBtn} onPress={() => { initLocation(); fetchNearbyTeams(); }}>
             <Ionicons name="refresh" size={18} color="#0F172A" />
           </TouchableOpacity>
         </View>
@@ -165,15 +230,9 @@ export default function ExploreScreen() {
               <View style={styles.emptyState}>
                 <Text style={styles.emptyEmoji}>🏏</Text>
                 <Text style={styles.emptyTitle}>No Active Teams Nearby</Text>
-                <Text style={styles.emptySubtitle}>
-                  No active cricket teams were found within {(radius / 1000).toFixed(0)}km of your location.
-                </Text>
-                <TouchableOpacity
-                  style={styles.increaseBtn}
-                  onPress={() => setRadius(radius + 3000)}
-                >
-                  <Text style={styles.increaseBtnText}>Expand Search Radius (+3km)</Text>
-                </TouchableOpacity>
+                {/* <Text style={styles.emptySubtitle}>
+                  No active cricket teams were found within 3km of your location.
+                </Text> */}
               </View>
             }
             renderItem={({ item }) => (
