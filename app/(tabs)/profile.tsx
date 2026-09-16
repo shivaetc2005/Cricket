@@ -171,7 +171,7 @@ export default function ProfileScreen() {
                 value={name}
                 onChangeText={setName}
                 placeholder="Name"
-                placeholderTextColor="#64748B"
+                placeholderTextColor={Colors.textSecondary}
               />
 
               <Text style={styles.label}>Phone Number</Text>
@@ -180,7 +180,7 @@ export default function ProfileScreen() {
                 value={phone}
                 onChangeText={setPhone}
                 placeholder="Phone"
-                placeholderTextColor="#64748B"
+                placeholderTextColor={Colors.textSecondary}
                 keyboardType="phone-pad"
               />
 
@@ -194,6 +194,7 @@ export default function ProfileScreen() {
                       skillLevel === lvl && styles.skillChipActive,
                     ]}
                     onPress={() => setSkillLevel(lvl)}
+                    activeOpacity={0.8}
                   >
                     <Text
                       style={[
@@ -211,9 +212,10 @@ export default function ProfileScreen() {
                 style={[styles.saveButton, saving && styles.buttonDisabled]}
                 onPress={handleSaveProfile}
                 disabled={saving}
+                activeOpacity={0.85}
               >
                 {saving ? (
-                  <ActivityIndicator color="#0F172A" />
+                  <ActivityIndicator color={Colors.primaryText} />
                 ) : (
                   <Text style={styles.saveButtonText}>Save Changes</Text>
                 )}
@@ -238,7 +240,7 @@ export default function ProfileScreen() {
         <View style={styles.card}>
           <Text style={styles.cardTitle}>My Team Affiliations</Text>
           {loadingTeams ? (
-            <ActivityIndicator style={{ marginVertical: 12 }} color="#10B981" />
+            <ActivityIndicator style={{ marginVertical: 12 }} color={Colors.primary} />
           ) : userTeams.length > 0 ? (
             userTeams.map((item) => (
               <View key={item.team_id} style={styles.teamRow}>
@@ -265,7 +267,7 @@ export default function ProfileScreen() {
           )}
         </View>
 
-        <TouchableOpacity style={styles.signOutButton} onPress={signOut}>
+        <TouchableOpacity style={styles.signOutButton} onPress={signOut} activeOpacity={0.85}>
           <Text style={styles.signOutText}>Sign Out</Text>
         </TouchableOpacity>
       </ScrollView>
@@ -287,38 +289,43 @@ const styles = StyleSheet.create({
     marginTop: 12,
   },
   avatarCircle: {
-    width: 84,
-    height: 84,
-    borderRadius: 42,
-    backgroundColor: Colors.background,
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    backgroundColor: Colors.tealLight,
     borderWidth: 2,
-    borderColor: '#10B981',
+    borderColor: '#C7E5DC',
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: 12,
   },
   avatarText: {
-    fontSize: 36,
-    color: '#34D399',
+    fontSize: 32,
+    color: Colors.tealText,
     fontWeight: '700',
   },
   profileName: {
-    fontSize: 24,
+    fontSize: 22,
     fontWeight: '800',
-    color: '#F8FAFC',
+    color: Colors.text,
   },
   emailText: {
     fontSize: 14,
-    color: '#94A3B8',
+    color: Colors.textSecondary,
     marginTop: 4,
   },
   card: {
-    backgroundColor: '#1E293B',
+    backgroundColor: Colors.card,
     borderRadius: 16,
     padding: 20,
     borderWidth: 1,
-    borderColor: '#334155',
-    marginBottom: 20,
+    borderColor: Colors.border,
+    marginBottom: 18,
+    shadowColor: Colors.navy,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.04,
+    shadowRadius: 6,
+    elevation: 2,
   },
   cardHeader: {
     flexDirection: 'row',
@@ -327,30 +334,30 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   cardTitle: {
-    fontSize: 18,
+    fontSize: 17,
     fontWeight: '700',
-    color: '#F8FAFC',
+    color: Colors.text,
   },
   editLink: {
-    color: '#34D399',
+    color: Colors.primary,
     fontWeight: '600',
     fontSize: 14,
   },
   label: {
     fontSize: 13,
     fontWeight: '600',
-    color: '#CBD5E1',
+    color: Colors.text,
     marginTop: 10,
     marginBottom: 6,
   },
   input: {
-    backgroundColor: Colors.background,
+    backgroundColor: Colors.surface,
     borderWidth: 1,
-    borderColor: '#334155',
+    borderColor: Colors.border,
     borderRadius: 10,
     paddingHorizontal: 14,
     paddingVertical: 12,
-    color: '#F8FAFC',
+    color: Colors.text,
     fontSize: 14,
   },
   skillChips: {
@@ -361,37 +368,37 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   skillChip: {
-    backgroundColor: Colors.background,
+    backgroundColor: Colors.surface,
     borderWidth: 1,
-    borderColor: '#334155',
+    borderColor: Colors.border,
     borderRadius: 20,
     paddingHorizontal: 14,
-    paddingVertical: 8,
+    paddingVertical: 7,
   },
   skillChipActive: {
-    backgroundColor: '#064E3B',
-    borderColor: '#10B981',
+    backgroundColor: Colors.tealLight,
+    borderColor: Colors.primary,
   },
   skillChipText: {
-    color: '#94A3B8',
+    color: Colors.textSecondary,
     fontSize: 13,
     fontWeight: '600',
   },
   skillChipTextActive: {
-    color: '#34D399',
+    color: Colors.tealText,
   },
   saveButton: {
-    backgroundColor: '#10B981',
-    borderRadius: 10,
+    backgroundColor: Colors.primary,
+    borderRadius: 11,
     paddingVertical: 14,
     alignItems: 'center',
     marginTop: 12,
   },
   buttonDisabled: {
-    opacity: 0.7,
+    opacity: 0.65,
   },
   saveButtonText: {
-    color: '#0F172A',
+    color: Colors.primaryText,
     fontWeight: '700',
     fontSize: 15,
   },
@@ -404,25 +411,27 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: 8,
     borderBottomWidth: 1,
-    borderBottomColor: '#334155',
+    borderBottomColor: '#EDEBE6',
   },
   infoLabel: {
-    color: '#94A3B8',
+    color: Colors.textSecondary,
     fontSize: 14,
   },
   infoValue: {
-    color: '#F8FAFC',
+    color: Colors.text,
     fontSize: 14,
     fontWeight: '600',
   },
   badgeSkill: {
-    backgroundColor: Colors.background,
+    backgroundColor: Colors.tealLight,
     paddingHorizontal: 10,
     paddingVertical: 4,
     borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#C7E5DC',
   },
   badgeSkillText: {
-    color: '#34D399',
+    color: Colors.tealText,
     fontSize: 12,
     fontWeight: '700',
   },
@@ -432,10 +441,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: 12,
     borderBottomWidth: 1,
-    borderBottomColor: '#334155',
+    borderBottomColor: '#EDEBE6',
   },
   teamName: {
-    color: '#F8FAFC',
+    color: Colors.text,
     fontSize: 15,
     fontWeight: '600',
   },
@@ -445,39 +454,43 @@ const styles = StyleSheet.create({
     borderRadius: 12,
   },
   captainBadge: {
-    backgroundColor: '#78350F',
+    backgroundColor: Colors.amberLight,
+    borderWidth: 1,
+    borderColor: '#F3DFC1',
   },
   memberBadge: {
-    backgroundColor: '#1E293B',
+    backgroundColor: Colors.secondary,
     borderWidth: 1,
-    borderColor: '#475569',
+    borderColor: Colors.border,
   },
   roleText: {
     fontSize: 12,
     fontWeight: '700',
   },
   captainText: {
-    color: '#FBBF24',
+    color: Colors.amber,
   },
   memberText: {
-    color: '#CBD5E1',
+    color: Colors.textSecondary,
   },
   emptyText: {
-    color: '#64748B',
+    color: Colors.textSecondary,
     fontSize: 14,
     fontStyle: 'italic',
     marginTop: 8,
   },
   signOutButton: {
-    backgroundColor: Colors.background,
-    borderRadius: 12,
-    paddingVertical: 16,
+    backgroundColor: Colors.card,
+    borderRadius: 11,
+    borderWidth: 1,
+    borderColor: Colors.border,
+    paddingVertical: 14,
     alignItems: 'center',
     marginTop: 10,
     marginBottom: 30,
   },
   signOutText: {
-    color: Colors.text,
+    color: Colors.error,
     fontWeight: '700',
     fontSize: 15,
   },

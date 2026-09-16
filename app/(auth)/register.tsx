@@ -14,6 +14,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Link, useRouter } from 'expo-router';
 import { useAuth } from '../../context/AuthContext';
 import { Ionicons } from '@expo/vector-icons';
+import { Colors } from '../../theme/colors';
 
 export default function RegisterScreen() {
   const { signUp } = useAuth();
@@ -71,14 +72,14 @@ export default function RegisterScreen() {
 
           {errorMsg ? (
             <View style={styles.errorBox}>
-              <Ionicons name="alert-circle" size={22} color="#FCA5A5" style={{ marginRight: 8 }} />
+              <Ionicons name="alert-circle" size={20} color={Colors.error} style={{ marginRight: 8 }} />
               <Text style={styles.errorText}>{errorMsg}</Text>
             </View>
           ) : null}
 
           {successMsg ? (
             <View style={styles.successBox}>
-              <Ionicons name="checkmark-circle" size={22} color="#34D399" style={{ marginRight: 8 }} />
+              <Ionicons name="checkmark-circle" size={20} color={Colors.teal} style={{ marginRight: 8 }} />
               <Text style={styles.successText}>{successMsg}</Text>
             </View>
           ) : null}
@@ -88,7 +89,7 @@ export default function RegisterScreen() {
             <TextInput
               style={styles.input}
               placeholder="e.g. Virat Kohli"
-              placeholderTextColor="#64748B"
+              placeholderTextColor={Colors.textSecondary}
               value={name}
               onChangeText={(t) => {
                 setName(t);
@@ -100,7 +101,7 @@ export default function RegisterScreen() {
             <TextInput
               style={styles.input}
               placeholder="captain@cricket.com"
-              placeholderTextColor="#64748B"
+              placeholderTextColor={Colors.textSecondary}
               value={email}
               onChangeText={(t) => {
                 setEmail(t);
@@ -115,7 +116,7 @@ export default function RegisterScreen() {
               <TextInput
                 style={styles.passwordInput}
                 placeholder="At least 6 characters"
-                placeholderTextColor="#64748B"
+                placeholderTextColor={Colors.textSecondary}
                 value={password}
                 onChangeText={(t) => {
                   setPassword(t);
@@ -131,7 +132,7 @@ export default function RegisterScreen() {
                 <Ionicons
                   name={showPassword ? 'eye-off-outline' : 'eye-outline'}
                   size={20}
-                  color="#94A3B8"
+                  color={Colors.textSecondary}
                 />
               </TouchableOpacity>
             </View>
@@ -139,8 +140,8 @@ export default function RegisterScreen() {
             <Text style={styles.label}>Phone Number (Optional)</Text>
             <TextInput
               style={styles.input}
-              placeholder="+1 555-0199"
-              placeholderTextColor="#64748B"
+              placeholder="+91 98765 43210"
+              placeholderTextColor={Colors.textSecondary}
               value={phone}
               onChangeText={setPhone}
               keyboardType="phone-pad"
@@ -150,10 +151,10 @@ export default function RegisterScreen() {
               style={[styles.primaryButton, loading && styles.buttonDisabled]}
               onPress={handleRegister}
               disabled={loading}
-              activeOpacity={0.8}
+              activeOpacity={0.85}
             >
               {loading ? (
-                <ActivityIndicator color="#0F172A" />
+                <ActivityIndicator color={Colors.primaryText} />
               ) : (
                 <Text style={styles.primaryButtonText}>Create Account</Text>
               )}
@@ -177,7 +178,7 @@ export default function RegisterScreen() {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: '#090D16',
+    backgroundColor: Colors.background,
   },
   container: {
     flex: 1,
@@ -189,128 +190,130 @@ const styles = StyleSheet.create({
   },
   headerSection: {
     alignItems: 'center',
-    marginBottom: 28,
+    marginBottom: 24,
   },
   title: {
-    fontSize: 30,
+    fontSize: 28,
     fontWeight: '800',
-    color: '#F8FAFC',
-    marginBottom: 8,
+    color: Colors.text,
+    marginBottom: 6,
+    letterSpacing: -0.3,
   },
   subtitle: {
     fontSize: 14,
-    color: '#94A3B8',
+    color: Colors.textSecondary,
     textAlign: 'center',
   },
   card: {
-    backgroundColor: '#1E293B',
-    borderRadius: 20,
+    backgroundColor: Colors.card,
+    borderRadius: 16,
     padding: 24,
     borderWidth: 1,
-    borderColor: '#334155',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.3,
-    shadowRadius: 16,
-    elevation: 8,
+    borderColor: Colors.border,
+    shadowColor: Colors.navy,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.04,
+    shadowRadius: 8,
+    elevation: 2,
   },
   label: {
     fontSize: 13,
     fontWeight: '600',
-    color: '#CBD5E1',
+    color: Colors.text,
     marginBottom: 6,
     marginTop: 12,
   },
   input: {
-    backgroundColor: '#0F172A',
+    backgroundColor: Colors.surface,
     borderWidth: 1,
-    borderColor: '#334155',
-    borderRadius: 12,
+    borderColor: Colors.border,
+    borderRadius: 10,
     paddingHorizontal: 16,
-    paddingVertical: 13,
-    color: '#F8FAFC',
+    paddingVertical: 12,
+    color: Colors.text,
     fontSize: 15,
   },
   passwordContainer: {
-    backgroundColor: '#0F172A',
+    backgroundColor: Colors.surface,
     borderWidth: 1,
-    borderColor: '#334155',
-    borderRadius: 12,
+    borderColor: Colors.border,
+    borderRadius: 10,
     flexDirection: 'row',
     alignItems: 'center',
   },
   passwordInput: {
     flex: 1,
     paddingHorizontal: 16,
-    paddingVertical: 13,
-    color: '#F8FAFC',
+    paddingVertical: 12,
+    color: Colors.text,
     fontSize: 15,
   },
   eyeButton: {
     paddingHorizontal: 14,
-    paddingVertical: 13,
+    paddingVertical: 12,
     justifyContent: 'center',
     alignItems: 'center',
   },
   errorBox: {
-    backgroundColor: '#450A0A',
+    backgroundColor: Colors.errorLight,
     borderWidth: 1,
-    borderColor: '#991B1B',
-    borderRadius: 12,
-    padding: 14,
-    marginBottom: 20,
+    borderColor: '#E8A5A5',
+    borderRadius: 10,
+    padding: 12,
+    marginBottom: 16,
     flexDirection: 'row',
     alignItems: 'center',
   },
   errorText: {
-    color: '#FCA5A5',
+    color: Colors.error,
     fontSize: 13,
     fontWeight: '600',
     flex: 1,
   },
   successBox: {
-    backgroundColor: '#064E3B',
+    backgroundColor: Colors.tealLight,
     borderWidth: 1,
-    borderColor: '#10B981',
-    borderRadius: 12,
-    padding: 14,
-    marginBottom: 20,
+    borderColor: '#C7E5DC',
+    borderRadius: 10,
+    padding: 12,
+    marginBottom: 16,
     flexDirection: 'row',
     alignItems: 'center',
   },
   successText: {
-    color: '#34D399',
+    color: Colors.tealText,
     fontSize: 13,
     fontWeight: '600',
     lineHeight: 18,
     flex: 1,
   },
   primaryButton: {
-    backgroundColor: '#10B981',
-    borderRadius: 12,
-    paddingVertical: 16,
+    backgroundColor: Colors.primary,
+    borderRadius: 11,
+    paddingVertical: 14,
     alignItems: 'center',
-    marginTop: 24,
+    marginTop: 22,
   },
   buttonDisabled: {
-    opacity: 0.7,
+    opacity: 0.65,
   },
   primaryButtonText: {
-    color: '#0F172A',
-    fontSize: 16,
+    color: Colors.primaryText,
+    fontSize: 15,
     fontWeight: '700',
+    letterSpacing: 0.2,
   },
   footerRow: {
     flexDirection: 'row',
     justifyContent: 'center',
-    marginTop: 20,
+    marginTop: 18,
   },
   footerText: {
-    color: '#94A3B8',
+    color: Colors.textSecondary,
     fontSize: 14,
   },
   linkText: {
-    color: '#34D399',
+    color: Colors.primary,
     fontSize: 14,
     fontWeight: '700',
   },

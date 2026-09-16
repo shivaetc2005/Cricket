@@ -13,6 +13,7 @@ import { useRouter } from 'expo-router';
 import { useAuth } from '../../context/AuthContext';
 import { supabase } from '../../lib/supabase';
 import { Ionicons } from '@expo/vector-icons';
+import { Colors } from '../../theme/colors';
 
 interface MatchRequestItem {
   id: string;
@@ -169,13 +170,13 @@ export default function MatchRequestsScreen() {
       <View style={styles.container}>
         <View style={styles.topHeader}>
           <Text style={styles.headerTitle}>Match Challenges</Text>
-          <TouchableOpacity style={styles.refreshBtn} onPress={fetchMatchRequests}>
-            <Ionicons name="refresh" size={18} color="#0F172A" />
+          <TouchableOpacity style={styles.refreshBtn} onPress={fetchMatchRequests} activeOpacity={0.8}>
+            <Ionicons name="refresh" size={18} color={Colors.primaryText} />
           </TouchableOpacity>
         </View>
 
         {loading ? (
-          <ActivityIndicator style={{ marginTop: 40 }} color="#10B981" size="large" />
+          <ActivityIndicator style={{ marginTop: 40 }} color={Colors.primary} size="large" />
         ) : (
           <FlatList
             data={requests}
@@ -185,7 +186,7 @@ export default function MatchRequestsScreen() {
             onRefresh={fetchMatchRequests}
             ListEmptyComponent={
               <View style={styles.emptyState}>
-                <Text style={styles.emptyEmoji}>⚡</Text>
+                <Text style={styles.emptyEmoji}>🏏</Text>
                 <Text style={styles.emptyTitle}>No Match Requests</Text>
                 <Text style={styles.emptySubtitle}>
                   Match challenges sent or received will appear here. Start a conversation with a team to request a match!
@@ -211,7 +212,16 @@ export default function MatchRequestsScreen() {
                         : styles.statusPending,
                     ]}
                   >
-                    <Text style={styles.statusPillText}>
+                    <Text
+                      style={[
+                        styles.statusPillText,
+                        item.status === 'confirmed'
+                          ? styles.statusConfirmedText
+                          : item.status === 'declined'
+                          ? styles.statusDeclinedText
+                          : styles.statusPendingText,
+                      ]}
+                    >
                       {item.status.toUpperCase()}
                     </Text>
                   </View>
@@ -219,12 +229,12 @@ export default function MatchRequestsScreen() {
 
                 <View style={styles.detailsBox}>
                   <View style={styles.detailRow}>
-                    <Ionicons name="calendar-outline" size={16} color="#34D399" />
+                    <Ionicons name="calendar-outline" size={16} color={Colors.primary} />
                     <Text style={styles.detailText}>{item.proposed_date}</Text>
                   </View>
 
                   <View style={styles.detailRow}>
-                    <Ionicons name="location-outline" size={16} color="#34D399" />
+                    <Ionicons name="location-outline" size={16} color={Colors.primary} />
                     <Text style={styles.detailText}>{item.proposed_ground}</Text>
                   </View>
                 </View>
@@ -236,8 +246,9 @@ export default function MatchRequestsScreen() {
                       style={[styles.confirmBtn, updatingId === item.id && styles.disabledBtn]}
                       onPress={() => handleUpdateStatus(item.id, 'confirmed')}
                       disabled={updatingId === item.id}
+                      activeOpacity={0.85}
                     >
-                      <Ionicons name="checkmark-circle-outline" size={18} color="#0F172A" />
+                      <Ionicons name="checkmark-circle-outline" size={18} color={Colors.primaryText} />
                       <Text style={styles.confirmBtnText}>Confirm Match</Text>
                     </TouchableOpacity>
 
@@ -245,8 +256,9 @@ export default function MatchRequestsScreen() {
                       style={[styles.declineBtn, updatingId === item.id && styles.disabledBtn]}
                       onPress={() => handleUpdateStatus(item.id, 'declined')}
                       disabled={updatingId === item.id}
+                      activeOpacity={0.85}
                     >
-                      <Ionicons name="close-circle-outline" size={18} color="#F8FAFC" />
+                      <Ionicons name="close-circle-outline" size={18} color={Colors.error} />
                       <Text style={styles.declineBtnText}>Decline</Text>
                     </TouchableOpacity>
                   </View>
@@ -254,8 +266,9 @@ export default function MatchRequestsScreen() {
                   <TouchableOpacity
                     style={styles.chatLinkBtn}
                     onPress={() => router.push(`/conversation/${item.conversation_id}` as any)}
+                    activeOpacity={0.7}
                   >
-                    <Ionicons name="chatbubbles-outline" size={16} color="#34D399" />
+                    <Ionicons name="chatbubbles-outline" size={16} color={Colors.primary} />
                     <Text style={styles.chatLinkText}>Open Match Chat</Text>
                   </TouchableOpacity>
                 ) : null}
@@ -271,7 +284,7 @@ export default function MatchRequestsScreen() {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: '#090D16',
+    backgroundColor: Colors.background,
   },
   container: {
     flex: 1,
@@ -286,10 +299,10 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 22,
     fontWeight: '800',
-    color: '#F8FAFC',
+    color: Colors.text,
   },
   refreshBtn: {
-    backgroundColor: '#10B981',
+    backgroundColor: Colors.primary,
     width: 36,
     height: 36,
     borderRadius: 18,
@@ -297,15 +310,20 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   list: {
-    paddingBottom: 20,
+    paddingBottom: 24,
     gap: 12,
   },
   card: {
-    backgroundColor: '#1E293B',
+    backgroundColor: Colors.card,
     borderRadius: 16,
     padding: 16,
     borderWidth: 1,
-    borderColor: '#334155',
+    borderColor: Colors.border,
+    shadowColor: Colors.navy,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.04,
+    shadowRadius: 6,
+    elevation: 2,
   },
   cardHeader: {
     flexDirection: 'row',
@@ -320,38 +338,46 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
   },
   teamText: {
-    fontSize: 16,
+    fontSize: 15,
     fontWeight: '700',
-    color: '#F8FAFC',
+    color: Colors.text,
   },
   vsBadge: {
-    fontSize: 12,
+    fontSize: 11,
     fontWeight: '800',
-    color: '#FBBF24',
+    color: Colors.amber,
     marginHorizontal: 6,
   },
   statusPill: {
-    paddingHorizontal: 10,
+    paddingHorizontal: 9,
     paddingVertical: 4,
     borderRadius: 10,
   },
   statusPending: {
-    backgroundColor: '#78350F',
+    backgroundColor: Colors.amberLight,
   },
   statusConfirmed: {
-    backgroundColor: '#064E3B',
+    backgroundColor: Colors.tealLight,
   },
   statusDeclined: {
-    backgroundColor: '#450A0A',
+    backgroundColor: Colors.errorLight,
   },
   statusPillText: {
-    color: '#F8FAFC',
     fontSize: 11,
     fontWeight: '700',
   },
+  statusPendingText: {
+    color: Colors.amber,
+  },
+  statusConfirmedText: {
+    color: Colors.tealText,
+  },
+  statusDeclinedText: {
+    color: Colors.error,
+  },
   detailsBox: {
-    backgroundColor: '#0F172A',
-    borderRadius: 12,
+    backgroundColor: Colors.secondary,
+    borderRadius: 10,
     padding: 12,
     gap: 8,
   },
@@ -361,8 +387,8 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   detailText: {
-    color: '#CBD5E1',
-    fontSize: 14,
+    color: Colors.text,
+    fontSize: 13,
     fontWeight: '500',
   },
   actionRow: {
@@ -372,33 +398,33 @@ const styles = StyleSheet.create({
   },
   confirmBtn: {
     flex: 1,
-    backgroundColor: '#10B981',
+    backgroundColor: Colors.primary,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     paddingVertical: 12,
-    borderRadius: 10,
+    borderRadius: 11,
     gap: 6,
   },
   confirmBtnText: {
-    color: '#0F172A',
+    color: Colors.primaryText,
     fontWeight: '700',
     fontSize: 14,
   },
   declineBtn: {
     flex: 1,
-    backgroundColor: '#450A0A',
+    backgroundColor: Colors.errorLight,
     borderWidth: 1,
-    borderColor: '#991B1B',
+    borderColor: '#E8A5A5',
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     paddingVertical: 12,
-    borderRadius: 10,
+    borderRadius: 11,
     gap: 6,
   },
   declineBtnText: {
-    color: '#FCA5A5',
+    color: Colors.error,
     fontWeight: '700',
     fontSize: 14,
   },
@@ -414,7 +440,7 @@ const styles = StyleSheet.create({
     gap: 6,
   },
   chatLinkText: {
-    color: '#34D399',
+    color: Colors.primary,
     fontSize: 13,
     fontWeight: '600',
   },
@@ -428,14 +454,14 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   emptyTitle: {
-    fontSize: 20,
+    fontSize: 18,
     fontWeight: '700',
-    color: '#F8FAFC',
+    color: Colors.text,
     marginBottom: 6,
   },
   emptySubtitle: {
     fontSize: 14,
-    color: '#94A3B8',
+    color: Colors.textSecondary,
     textAlign: 'center',
     paddingHorizontal: 30,
   },

@@ -15,6 +15,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Link } from 'expo-router';
 import { useAuth } from '../../context/AuthContext';
 import { Ionicons } from '@expo/vector-icons';
+import { Colors } from '../../theme/colors';
 
 export default function LoginScreen() {
   const { signIn, resetPassword } = useAuth();
@@ -90,7 +91,7 @@ export default function LoginScreen() {
 
           {errorMsg ? (
             <View style={styles.errorBox}>
-              <Ionicons name="alert-circle" size={22} color="#FCA5A5" style={{ marginRight: 8 }} />
+              <Ionicons name="alert-circle" size={20} color={Colors.error} style={{ marginRight: 8 }} />
               <Text style={styles.errorText}>{errorMsg}</Text>
             </View>
           ) : null}
@@ -100,7 +101,7 @@ export default function LoginScreen() {
             <TextInput
               style={[styles.input, errorMsg ? styles.inputError : null]}
               placeholder="captain@cricket.com"
-              placeholderTextColor="#64748B"
+              placeholderTextColor={Colors.textSecondary}
               value={email}
               onChangeText={(text) => {
                 setEmail(text);
@@ -126,7 +127,7 @@ export default function LoginScreen() {
               <TextInput
                 style={styles.passwordInput}
                 placeholder="••••••••"
-                placeholderTextColor="#64748B"
+                placeholderTextColor={Colors.textSecondary}
                 value={password}
                 onChangeText={(text) => {
                   setPassword(text);
@@ -142,7 +143,7 @@ export default function LoginScreen() {
                 <Ionicons
                   name={showPassword ? 'eye-off-outline' : 'eye-outline'}
                   size={20}
-                  color="#94A3B8"
+                  color={Colors.textSecondary}
                 />
               </TouchableOpacity>
             </View>
@@ -151,10 +152,10 @@ export default function LoginScreen() {
               style={[styles.primaryButton, loading && styles.buttonDisabled]}
               onPress={handleLogin}
               disabled={loading}
-              activeOpacity={0.8}
+              activeOpacity={0.85}
             >
               {loading ? (
-                <ActivityIndicator color="#0F172A" />
+                <ActivityIndicator color={Colors.primaryText} />
               ) : (
                 <Text style={styles.primaryButtonText}>Sign In</Text>
               )}
@@ -183,7 +184,7 @@ export default function LoginScreen() {
           <View style={styles.modalCard}>
             <View style={styles.modalHeader}>
               <View style={styles.modalIconBg}>
-                <Ionicons name="key-outline" size={24} color="#10B981" />
+                <Ionicons name="key-outline" size={22} color={Colors.primary} />
               </View>
               <Text style={styles.modalTitle}>Reset Password</Text>
               <Text style={styles.modalSubtitle}>
@@ -193,14 +194,14 @@ export default function LoginScreen() {
 
             {forgotError ? (
               <View style={styles.modalErrorBox}>
-                <Ionicons name="alert-circle" size={18} color="#FCA5A5" style={{ marginRight: 6 }} />
+                <Ionicons name="alert-circle" size={18} color={Colors.error} style={{ marginRight: 6 }} />
                 <Text style={styles.modalErrorText}>{forgotError}</Text>
               </View>
             ) : null}
 
             {forgotSuccess ? (
               <View style={styles.modalSuccessBox}>
-                <Ionicons name="checkmark-circle" size={20} color="#34D399" style={{ marginRight: 8 }} />
+                <Ionicons name="checkmark-circle" size={20} color={Colors.teal} style={{ marginRight: 8 }} />
                 <Text style={styles.modalSuccessText}>{forgotSuccess}</Text>
               </View>
             ) : (
@@ -209,7 +210,7 @@ export default function LoginScreen() {
                 <TextInput
                   style={styles.input}
                   placeholder="your.email@domain.com"
-                  placeholderTextColor="#64748B"
+                  placeholderTextColor={Colors.textSecondary}
                   value={forgotEmail}
                   onChangeText={(text) => {
                     setForgotEmail(text);
@@ -223,10 +224,10 @@ export default function LoginScreen() {
                   style={[styles.primaryButton, forgotLoading && styles.buttonDisabled, { marginTop: 20 }]}
                   onPress={handleForgotPassword}
                   disabled={forgotLoading}
-                  activeOpacity={0.8}
+                  activeOpacity={0.85}
                 >
                   {forgotLoading ? (
-                    <ActivityIndicator color="#0F172A" />
+                    <ActivityIndicator color={Colors.primaryText} />
                   ) : (
                     <Text style={styles.primaryButtonText}>Send Reset Link</Text>
                   )}
@@ -249,7 +250,7 @@ export default function LoginScreen() {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: '#090D16',
+    backgroundColor: Colors.background,
   },
   container: {
     flex: 1,
@@ -261,50 +262,51 @@ const styles = StyleSheet.create({
   },
   logoSection: {
     alignItems: 'center',
-    marginBottom: 32,
+    marginBottom: 28,
   },
   badge: {
-    backgroundColor: '#064E3B',
+    backgroundColor: Colors.tealLight,
     paddingHorizontal: 14,
     paddingVertical: 6,
     borderRadius: 20,
     borderWidth: 1,
-    borderColor: '#10B981',
-    marginBottom: 16,
+    borderColor: '#C7E5DC',
+    marginBottom: 14,
   },
   badgeText: {
-    color: '#34D399',
+    color: Colors.tealText,
     fontSize: 12,
     fontWeight: '700',
-    letterSpacing: 1,
+    letterSpacing: 0.8,
   },
   title: {
-    fontSize: 32,
+    fontSize: 28,
     fontWeight: '800',
-    color: '#F8FAFC',
-    marginBottom: 8,
+    color: Colors.text,
+    marginBottom: 6,
+    letterSpacing: -0.3,
   },
   subtitle: {
     fontSize: 14,
-    color: '#94A3B8',
+    color: Colors.textSecondary,
     textAlign: 'center',
   },
   card: {
-    backgroundColor: '#1E293B',
-    borderRadius: 20,
+    backgroundColor: Colors.card,
+    borderRadius: 16,
     padding: 24,
     borderWidth: 1,
-    borderColor: '#334155',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.3,
-    shadowRadius: 16,
-    elevation: 8,
+    borderColor: Colors.border,
+    shadowColor: Colors.navy,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.04,
+    shadowRadius: 8,
+    elevation: 2,
   },
   label: {
     fontSize: 13,
     fontWeight: '600',
-    color: '#CBD5E1',
+    color: Colors.text,
     marginBottom: 8,
   },
   passwordHeaderRow: {
@@ -315,172 +317,179 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   forgotLink: {
-    color: '#34D399',
+    color: Colors.primary,
     fontSize: 13,
     fontWeight: '600',
   },
   input: {
-    backgroundColor: '#0F172A',
+    backgroundColor: Colors.surface,
     borderWidth: 1,
-    borderColor: '#334155',
-    borderRadius: 12,
+    borderColor: Colors.border,
+    borderRadius: 10,
     paddingHorizontal: 16,
-    paddingVertical: 14,
-    color: '#F8FAFC',
+    paddingVertical: 13,
+    color: Colors.text,
     fontSize: 15,
   },
   passwordContainer: {
-    backgroundColor: '#0F172A',
+    backgroundColor: Colors.surface,
     borderWidth: 1,
-    borderColor: '#334155',
-    borderRadius: 12,
+    borderColor: Colors.border,
+    borderRadius: 10,
     flexDirection: 'row',
     alignItems: 'center',
   },
   passwordInput: {
     flex: 1,
     paddingHorizontal: 16,
-    paddingVertical: 14,
-    color: '#F8FAFC',
+    paddingVertical: 13,
+    color: Colors.text,
     fontSize: 15,
   },
   eyeButton: {
     paddingHorizontal: 14,
-    paddingVertical: 14,
+    paddingVertical: 13,
     justifyContent: 'center',
     alignItems: 'center',
   },
   inputError: {
-    borderColor: '#EF4444',
+    borderColor: Colors.error,
   },
   errorBox: {
-    backgroundColor: '#450A0A',
+    backgroundColor: Colors.errorLight,
     borderWidth: 1,
-    borderColor: '#991B1B',
-    borderRadius: 12,
-    padding: 14,
-    marginBottom: 20,
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  errorText: {
-    color: '#FCA5A5',
-    fontSize: 13,
-    fontWeight: '600',
-    flex: 1,
-  },
-  primaryButton: {
-    backgroundColor: '#10B981',
-    borderRadius: 12,
-    paddingVertical: 16,
-    alignItems: 'center',
-    marginTop: 24,
-  },
-  buttonDisabled: {
-    opacity: 0.7,
-  },
-  primaryButtonText: {
-    color: '#0F172A',
-    fontSize: 16,
-    fontWeight: '700',
-  },
-  footerRow: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    marginTop: 20,
-  },
-  footerText: {
-    color: '#94A3B8',
-    fontSize: 14,
-  },
-  linkText: {
-    color: '#34D399',
-    fontSize: 14,
-    fontWeight: '700',
-  },
-  modalOverlay: {
-    flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.75)',
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 20,
-  },
-  modalCard: {
-    backgroundColor: '#1E293B',
-    borderRadius: 20,
-    padding: 24,
-    width: '100%',
-    maxWidth: 400,
-    borderWidth: 1,
-    borderColor: '#334155',
-  },
-  modalHeader: {
-    alignItems: 'center',
-    marginBottom: 20,
-  },
-  modalIconBg: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
-    backgroundColor: '#064E3B',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: 12,
-    borderWidth: 1,
-    borderColor: '#10B981',
-  },
-  modalTitle: {
-    fontSize: 22,
-    fontWeight: '800',
-    color: '#F8FAFC',
-    marginBottom: 6,
-  },
-  modalSubtitle: {
-    fontSize: 13,
-    color: '#94A3B8',
-    textAlign: 'center',
-    lineHeight: 18,
-  },
-  modalErrorBox: {
-    backgroundColor: '#450A0A',
-    borderWidth: 1,
-    borderColor: '#991B1B',
+    borderColor: '#E8A5A5',
     borderRadius: 12,
     padding: 12,
     marginBottom: 16,
     flexDirection: 'row',
     alignItems: 'center',
   },
+  errorText: {
+    color: Colors.error,
+    fontSize: 13,
+    fontWeight: '600',
+    flex: 1,
+  },
+  primaryButton: {
+    backgroundColor: Colors.primary,
+    borderRadius: 11,
+    paddingVertical: 14,
+    alignItems: 'center',
+    marginTop: 20,
+  },
+  buttonDisabled: {
+    opacity: 0.65,
+  },
+  primaryButtonText: {
+    color: Colors.primaryText,
+    fontSize: 15,
+    fontWeight: '700',
+    letterSpacing: 0.2,
+  },
+  footerRow: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    marginTop: 18,
+  },
+  footerText: {
+    color: Colors.textSecondary,
+    fontSize: 14,
+  },
+  linkText: {
+    color: Colors.primary,
+    fontSize: 14,
+    fontWeight: '700',
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(23, 34, 53, 0.6)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
+  },
+  modalCard: {
+    backgroundColor: Colors.card,
+    borderRadius: 16,
+    padding: 24,
+    width: '100%',
+    maxWidth: 400,
+    borderWidth: 1,
+    borderColor: Colors.border,
+    shadowColor: Colors.navy,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 16,
+    elevation: 4,
+  },
+  modalHeader: {
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  modalIconBg: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: Colors.tealLight,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 12,
+    borderWidth: 1,
+    borderColor: '#C7E5DC',
+  },
+  modalTitle: {
+    fontSize: 20,
+    fontWeight: '800',
+    color: Colors.text,
+    marginBottom: 6,
+  },
+  modalSubtitle: {
+    fontSize: 13,
+    color: Colors.textSecondary,
+    textAlign: 'center',
+    lineHeight: 18,
+  },
+  modalErrorBox: {
+    backgroundColor: Colors.errorLight,
+    borderWidth: 1,
+    borderColor: '#E8A5A5',
+    borderRadius: 10,
+    padding: 12,
+    marginBottom: 16,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
   modalErrorText: {
-    color: '#FCA5A5',
+    color: Colors.error,
     fontSize: 13,
     flex: 1,
   },
   modalSuccessBox: {
-    backgroundColor: '#064E3B',
+    backgroundColor: Colors.tealLight,
     borderWidth: 1,
-    borderColor: '#10B981',
-    borderRadius: 12,
-    padding: 16,
+    borderColor: '#C7E5DC',
+    borderRadius: 10,
+    padding: 14,
     marginVertical: 12,
     flexDirection: 'row',
     alignItems: 'center',
   },
   modalSuccessText: {
-    color: '#34D399',
-    fontSize: 14,
+    color: Colors.tealText,
+    fontSize: 13,
     fontWeight: '600',
     flex: 1,
-    lineHeight: 20,
+    lineHeight: 18,
   },
   modalCloseButton: {
-    marginTop: 16,
-    paddingVertical: 12,
+    marginTop: 14,
+    paddingVertical: 10,
     alignItems: 'center',
   },
   modalCloseText: {
-    color: '#94A3B8',
+    color: Colors.textSecondary,
     fontSize: 14,
     fontWeight: '600',
   },
 });
+

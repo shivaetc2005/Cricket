@@ -17,6 +17,7 @@ import { useLocalSearchParams, useRouter, Stack } from 'expo-router';
 import { useAuth } from '../../context/AuthContext';
 import { supabase } from '../../lib/supabase';
 import { Ionicons } from '@expo/vector-icons';
+import { Colors } from '../../theme/colors';
 
 interface Message {
   id: string;
@@ -205,14 +206,16 @@ export default function ConversationScreen() {
       <Stack.Screen
         options={{
           title: conversation?.teams?.name ? `Chat with ${conversation.teams.name}` : 'Team Chat',
-          headerStyle: { backgroundColor: '#0F172A' },
-          headerTintColor: '#F8FAFC',
+          headerStyle: { backgroundColor: Colors.navy },
+          headerTintColor: '#FFFFFF',
+          headerTitleStyle: { fontWeight: '700' },
           headerRight: () => (
             <TouchableOpacity
               style={styles.headerReqBtn}
               onPress={() => setMatchModalVisible(true)}
+              activeOpacity={0.85}
             >
-              <Ionicons name="trophy-outline" size={16} color="#0F172A" />
+              <Ionicons name="trophy-outline" size={15} color={Colors.primaryText} />
               <Text style={styles.headerReqText}>Request Match</Text>
             </TouchableOpacity>
           ),
@@ -225,7 +228,7 @@ export default function ConversationScreen() {
       >
         <View style={styles.container}>
           {loading ? (
-            <ActivityIndicator style={{ marginTop: 40 }} color="#10B981" size="large" />
+            <ActivityIndicator style={{ marginTop: 40 }} color={Colors.primary} size="large" />
           ) : (
             <FlatList
               ref={flatListRef}
@@ -269,7 +272,7 @@ export default function ConversationScreen() {
               <TextInput
                 style={styles.input}
                 placeholder="Type a message..."
-                placeholderTextColor="#64748B"
+                placeholderTextColor={Colors.textSecondary}
                 value={inputText}
                 onChangeText={setInputText}
                 multiline
@@ -278,17 +281,18 @@ export default function ConversationScreen() {
                 style={[styles.sendButton, (!inputText.trim() || sending) && styles.sendDisabled]}
                 onPress={handleSendMessage}
                 disabled={!inputText.trim() || sending}
+                activeOpacity={0.85}
               >
                 {sending ? (
-                  <ActivityIndicator size="small" color="#0F172A" />
+                  <ActivityIndicator size="small" color={Colors.primaryText} />
                 ) : (
-                  <Ionicons name="send" size={18} color="#0F172A" />
+                  <Ionicons name="send" size={17} color={Colors.primaryText} />
                 )}
               </TouchableOpacity>
             </View>
           ) : (
             <View style={styles.readOnlyBanner}>
-              <Ionicons name="lock-closed-outline" size={18} color="#94A3B8" />
+              <Ionicons name="lock-closed-outline" size={18} color={Colors.textSecondary} />
               <Text style={styles.readOnlyText}>
                 Only the team captain or inquiry initiator can reply.
               </Text>
@@ -304,7 +308,7 @@ export default function ConversationScreen() {
             <View style={styles.modalHeader}>
               <Text style={styles.modalTitle}>Request Match</Text>
               <TouchableOpacity onPress={() => setMatchModalVisible(false)}>
-                <Ionicons name="close" size={24} color="#94A3B8" />
+                <Ionicons name="close" size={24} color={Colors.textSecondary} />
               </TouchableOpacity>
             </View>
 
@@ -312,7 +316,7 @@ export default function ConversationScreen() {
             <TextInput
               style={styles.modalInput}
               placeholder="e.g. Next Saturday, 10:00 AM"
-              placeholderTextColor="#64748B"
+              placeholderTextColor={Colors.textSecondary}
               value={proposedDate}
               onChangeText={setProposedDate}
             />
@@ -321,7 +325,7 @@ export default function ConversationScreen() {
             <TextInput
               style={styles.modalInput}
               placeholder="e.g. Oval Cricket Ground, Pitch 2"
-              placeholderTextColor="#64748B"
+              placeholderTextColor={Colors.textSecondary}
               value={proposedGround}
               onChangeText={setProposedGround}
             />
@@ -330,9 +334,10 @@ export default function ConversationScreen() {
               style={[styles.submitMatchBtn, submittingMatch && styles.sendDisabled]}
               onPress={handleCreateMatchRequest}
               disabled={submittingMatch}
+              activeOpacity={0.85}
             >
               {submittingMatch ? (
-                <ActivityIndicator color="#0F172A" />
+                <ActivityIndicator color={Colors.primaryText} />
               ) : (
                 <Text style={styles.submitMatchText}>Send Match Challenge ⚡</Text>
               )}
@@ -347,13 +352,13 @@ export default function ConversationScreen() {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: '#090D16',
+    backgroundColor: Colors.background,
   },
   container: {
     flex: 1,
   },
   headerReqBtn: {
-    backgroundColor: '#10B981',
+    backgroundColor: Colors.primary,
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: 12,
@@ -362,7 +367,7 @@ const styles = StyleSheet.create({
     gap: 4,
   },
   headerReqText: {
-    color: '#0F172A',
+    color: Colors.primaryText,
     fontWeight: '700',
     fontSize: 12,
   },
@@ -380,12 +385,12 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   emptyText: {
-    color: '#F8FAFC',
+    color: Colors.text,
     fontSize: 16,
     fontWeight: '700',
   },
   emptySub: {
-    color: '#94A3B8',
+    color: Colors.textSecondary,
     fontSize: 13,
     marginTop: 4,
   },
@@ -398,88 +403,88 @@ const styles = StyleSheet.create({
   },
   myMessage: {
     alignSelf: 'flex-end',
-    backgroundColor: '#10B981',
+    backgroundColor: Colors.primary,
   },
   otherMessage: {
     alignSelf: 'flex-start',
-    backgroundColor: '#1E293B',
+    backgroundColor: Colors.card,
     borderWidth: 1,
-    borderColor: '#334155',
+    borderColor: Colors.border,
   },
   senderName: {
     fontSize: 11,
     fontWeight: '700',
-    color: '#34D399',
+    color: Colors.primary,
     marginBottom: 4,
   },
   messageText: {
     fontSize: 15,
-    color: '#F8FAFC',
+    color: Colors.text,
   },
   myMessageText: {
-    color: '#0F172A',
+    color: Colors.primaryText,
     fontWeight: '500',
   },
   inputContainer: {
     flexDirection: 'row',
     padding: 12,
-    backgroundColor: '#0F172A',
+    backgroundColor: Colors.card,
     borderTopWidth: 1,
-    borderTopColor: '#1E293B',
+    borderTopColor: Colors.border,
     alignItems: 'center',
     gap: 8,
   },
   input: {
     flex: 1,
-    backgroundColor: '#1E293B',
+    backgroundColor: Colors.surface,
     borderWidth: 1,
-    borderColor: '#334155',
+    borderColor: Colors.border,
     borderRadius: 20,
     paddingHorizontal: 16,
     paddingVertical: 10,
-    color: '#F8FAFC',
+    color: Colors.text,
     fontSize: 14,
     maxHeight: 100,
   },
   sendButton: {
-    backgroundColor: '#10B981',
-    width: 42,
-    height: 42,
-    borderRadius: 21,
+    backgroundColor: Colors.primary,
+    width: 40,
+    height: 40,
+    borderRadius: 20,
     alignItems: 'center',
     justifyContent: 'center',
   },
   sendDisabled: {
-    opacity: 0.6,
+    opacity: 0.5,
   },
   readOnlyBanner: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#1E293B',
+    backgroundColor: Colors.secondary,
     paddingVertical: 14,
     paddingHorizontal: 16,
     borderTopWidth: 1,
-    borderTopColor: '#334155',
+    borderTopColor: Colors.border,
     gap: 8,
   },
   readOnlyText: {
-    color: '#94A3B8',
+    color: Colors.textSecondary,
     fontSize: 13,
     fontWeight: '600',
   },
   modalOverlay: {
     flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.7)',
+    backgroundColor: 'rgba(23, 34, 53, 0.6)',
     justifyContent: 'flex-end',
   },
   modalContent: {
-    backgroundColor: '#1E293B',
-    borderTopLeftRadius: 24,
-    borderTopRightRadius: 24,
+    backgroundColor: Colors.card,
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
     padding: 24,
     borderWidth: 1,
-    borderColor: '#334155',
+    borderColor: Colors.border,
   },
   modalHeader: {
     flexDirection: 'row',
@@ -490,35 +495,35 @@ const styles = StyleSheet.create({
   modalTitle: {
     fontSize: 18,
     fontWeight: '800',
-    color: '#F8FAFC',
+    color: Colors.text,
   },
   inputLabel: {
-    color: '#CBD5E1',
+    color: Colors.text,
     fontSize: 13,
     fontWeight: '600',
     marginBottom: 6,
     marginTop: 10,
   },
   modalInput: {
-    backgroundColor: '#0F172A',
+    backgroundColor: Colors.surface,
     borderWidth: 1,
-    borderColor: '#334155',
-    borderRadius: 12,
+    borderColor: Colors.border,
+    borderRadius: 10,
     paddingHorizontal: 14,
     paddingVertical: 12,
-    color: '#F8FAFC',
+    color: Colors.text,
     fontSize: 14,
   },
   submitMatchBtn: {
-    backgroundColor: '#10B981',
-    borderRadius: 12,
-    paddingVertical: 16,
+    backgroundColor: Colors.primary,
+    borderRadius: 11,
+    paddingVertical: 14,
     alignItems: 'center',
     marginTop: 20,
   },
   submitMatchText: {
-    color: '#0F172A',
+    color: Colors.primaryText,
     fontWeight: '700',
-    fontSize: 16,
+    fontSize: 15,
   },
 });

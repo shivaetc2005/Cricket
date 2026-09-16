@@ -13,6 +13,7 @@ import Constants, { ExecutionEnvironment } from 'expo-constants';
 import { useAuth } from '../../context/AuthContext';
 import { supabase } from '../../lib/supabase';
 import { Ionicons } from '@expo/vector-icons';
+import { Colors } from '../../theme/colors';
 
 interface NotificationItem {
   id: string;
@@ -140,15 +141,15 @@ export default function NotificationsScreen() {
   const getIconForType = (type: string) => {
     switch (type) {
       case 'message':
-        return { name: 'chatbubble-ellipses-outline', color: '#3B82F6' };
+        return { name: 'chatbubble-ellipses-outline', color: Colors.primary, bg: Colors.tealLight };
       case 'match_request':
-        return { name: 'trophy-outline', color: '#F59E0B' };
+        return { name: 'trophy-outline', color: Colors.amber, bg: Colors.amberLight };
       case 'match_confirmed':
-        return { name: 'checkmark-circle-outline', color: '#10B981' };
+        return { name: 'checkmark-circle-outline', color: Colors.primary, bg: Colors.tealLight };
       case 'match_declined':
-        return { name: 'close-circle-outline', color: '#EF4444' };
+        return { name: 'close-circle-outline', color: Colors.error, bg: Colors.errorLight };
       default:
-        return { name: 'notifications-outline', color: '#10B981' };
+        return { name: 'notifications-outline', color: Colors.primary, bg: Colors.tealLight };
     }
   };
 
@@ -157,8 +158,8 @@ export default function NotificationsScreen() {
       <View style={styles.container}>
         <View style={styles.topHeader}>
           <Text style={styles.headerTitle}>Notifications</Text>
-          <TouchableOpacity style={styles.refreshBtn} onPress={fetchNotifications}>
-            <Ionicons name="refresh" size={18} color="#0F172A" />
+          <TouchableOpacity style={styles.refreshBtn} onPress={fetchNotifications} activeOpacity={0.8}>
+            <Ionicons name="refresh" size={18} color={Colors.primaryText} />
           </TouchableOpacity>
         </View>
 
@@ -201,15 +202,15 @@ export default function NotificationsScreen() {
                 <TouchableOpacity
                   style={[styles.card, !item.read && styles.unreadCard]}
                   onPress={() => handleOpenNotification(item)}
-                  activeOpacity={0.8}
+                  activeOpacity={0.85}
                 >
                   <View
                     style={[
                       styles.iconCircle,
-                      { backgroundColor: `${iconInfo.color}20`, borderColor: iconInfo.color },
+                      { backgroundColor: iconInfo.bg, borderColor: iconInfo.color },
                     ]}
                   >
-                    <Ionicons name={iconInfo.name as any} size={22} color={iconInfo.color} />
+                    <Ionicons name={iconInfo.name as any} size={20} color={iconInfo.color} />
                   </View>
 
                   <View style={{ flex: 1, marginLeft: 14 }}>
@@ -220,7 +221,7 @@ export default function NotificationsScreen() {
                     <Text style={styles.notifBody}>{body}</Text>
                   </View>
 
-                  <Ionicons name="chevron-forward" size={18} color="#64748B" />
+                  <Ionicons name="chevron-forward" size={18} color={Colors.textSecondary} />
                 </TouchableOpacity>
               );
             }}
@@ -234,7 +235,7 @@ export default function NotificationsScreen() {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: '#090D16',
+    backgroundColor: Colors.background,
   },
   container: {
     flex: 1,
@@ -249,10 +250,10 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 22,
     fontWeight: '800',
-    color: '#F8FAFC',
+    color: Colors.text,
   },
   refreshBtn: {
-    backgroundColor: '#10B981',
+    backgroundColor: Colors.primary,
     width: 36,
     height: 36,
     borderRadius: 18,
@@ -260,21 +261,26 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   list: {
-    paddingBottom: 20,
+    paddingBottom: 24,
     gap: 10,
   },
   card: {
-    backgroundColor: '#1E293B',
-    borderRadius: 14,
+    backgroundColor: Colors.card,
+    borderRadius: 16,
     padding: 14,
     borderWidth: 1,
-    borderColor: '#334155',
+    borderColor: Colors.border,
     flexDirection: 'row',
     alignItems: 'center',
+    shadowColor: Colors.navy,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.03,
+    shadowRadius: 6,
+    elevation: 2,
   },
   unreadCard: {
-    borderColor: '#10B981',
-    backgroundColor: '#0F1E24',
+    borderColor: Colors.primary,
+    backgroundColor: '#FAFDFB',
   },
   iconCircle: {
     width: 44,
@@ -292,18 +298,18 @@ const styles = StyleSheet.create({
   notifTitle: {
     fontSize: 15,
     fontWeight: '700',
-    color: '#F8FAFC',
+    color: Colors.text,
   },
   unreadDot: {
     width: 8,
     height: 8,
     borderRadius: 4,
-    backgroundColor: '#10B981',
+    backgroundColor: Colors.primary,
     marginLeft: 6,
   },
   notifBody: {
     fontSize: 13,
-    color: '#CBD5E1',
+    color: Colors.textSecondary,
     marginTop: 2,
   },
   emptyState: {
@@ -316,14 +322,14 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   emptyTitle: {
-    fontSize: 20,
+    fontSize: 18,
     fontWeight: '700',
-    color: '#F8FAFC',
+    color: Colors.text,
     marginBottom: 6,
   },
   emptySubtitle: {
     fontSize: 14,
-    color: '#94A3B8',
+    color: Colors.textSecondary,
     textAlign: 'center',
     paddingHorizontal: 30,
   },

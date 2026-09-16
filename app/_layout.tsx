@@ -1,12 +1,11 @@
 import { Stack, ThemeProvider, useRouter, useSegments } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
+import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
 import { ActivityIndicator, StyleSheet, View } from 'react-native';
 import { AuthProvider, useAuth } from '../context/AuthContext';
 import { ClassicTheme } from '../theme/classicTheme';
 import { Colors } from '../theme/colors';
-
-
 
 SplashScreen.preventAutoHideAsync();
 
@@ -31,7 +30,7 @@ function InitialLayout() {
   if (loading) {
     return (
       <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#10B981" />
+        <ActivityIndicator size="large" color={Colors.primary} />
       </View>
     );
   }
@@ -49,6 +48,7 @@ export default function RootLayout() {
   return (
     <AuthProvider>
       <ThemeProvider value={ClassicTheme}>
+        <StatusBar style="dark" />
         <InitialLayout />
       </ThemeProvider>
     </AuthProvider>

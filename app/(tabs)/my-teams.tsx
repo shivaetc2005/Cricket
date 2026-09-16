@@ -17,6 +17,7 @@ import * as Location from 'expo-location';
 import { useAuth } from '../../context/AuthContext';
 import { supabase } from '../../lib/supabase';
 import { Ionicons } from '@expo/vector-icons';
+import { Colors } from '../../theme/colors';
 
 interface TeamItem {
   id: string;
@@ -178,7 +179,7 @@ export default function MyTeamsScreen() {
         </View>
 
         {loading ? (
-          <ActivityIndicator style={{ marginTop: 40 }} color="#10B981" size="large" />
+          <ActivityIndicator style={{ marginTop: 40 }} color={Colors.primary} size="large" />
         ) : (
           <FlatList
             data={teams}
@@ -193,7 +194,7 @@ export default function MyTeamsScreen() {
                 <Text style={styles.emptySubtitle}>
                   Create your own team as a Captain or get added to an existing team.
                 </Text>
-                <TouchableOpacity style={styles.emptyCreateBtn} onPress={() => setModalVisible(true)}>
+                <TouchableOpacity style={styles.emptyCreateBtn} onPress={() => setModalVisible(true)} activeOpacity={0.85}>
                   <Text style={styles.emptyCreateBtnText}>Create Your Team Now</Text>
                 </TouchableOpacity>
               </View>
@@ -201,7 +202,7 @@ export default function MyTeamsScreen() {
             renderItem={({ item }) => (
               <TouchableOpacity
                 style={styles.teamCard}
-                activeOpacity={0.8}
+                activeOpacity={0.85}
                 onPress={() => router.push(`/team/${item.id}` as any)}
               >
                 <View style={styles.cardTop}>
@@ -218,7 +219,7 @@ export default function MyTeamsScreen() {
                       ))}
                     </View>
                   </View>
-                  <Ionicons name="chevron-forward" size={20} color="#64748B" />
+                  <Ionicons name="chevron-forward" size={18} color={Colors.textSecondary} />
                 </View>
 
                 <View style={styles.cardFooter}>
@@ -231,10 +232,10 @@ export default function MyTeamsScreen() {
                     <View
                       style={[
                         styles.dot,
-                        { backgroundColor: item.status === 'active' ? '#10B981' : '#64748B' },
+                        { backgroundColor: item.status === 'active' ? Colors.teal : Colors.textSecondary },
                       ]}
                     />
-                    <Text style={styles.statusText}>
+                    <Text style={[styles.statusText, item.status === 'active' ? styles.statusActiveText : styles.statusInactiveText]}>
                       {item.status === 'active' ? 'Active' : 'Inactive'}
                     </Text>
                   </View>
@@ -267,7 +268,7 @@ export default function MyTeamsScreen() {
               <View style={styles.modalHeader}>
                 <Text style={styles.modalTitle}>Create New Team</Text>
                 <TouchableOpacity onPress={() => setModalVisible(false)}>
-                  <Ionicons name="close" size={24} color="#94A3B8" />
+                  <Ionicons name="close" size={24} color={Colors.textSecondary} />
                 </TouchableOpacity>
               </View>
 
@@ -275,7 +276,7 @@ export default function MyTeamsScreen() {
               <TextInput
                 style={styles.input}
                 placeholder="e.g. Thunder XI"
-                placeholderTextColor="#64748B"
+                placeholderTextColor={Colors.textSecondary}
                 value={teamName}
                 onChangeText={setTeamName}
               />
@@ -285,12 +286,13 @@ export default function MyTeamsScreen() {
                 style={styles.locButton}
                 onPress={handleGetCurrentLocation}
                 disabled={locating}
+                activeOpacity={0.8}
               >
                 {locating ? (
-                  <ActivityIndicator size="small" color="#34D399" />
+                  <ActivityIndicator size="small" color={Colors.primary} />
                 ) : (
                   <>
-                    <Ionicons name="navigate-outline" size={18} color="#34D399" />
+                    <Ionicons name="navigate-outline" size={18} color={Colors.primary} />
                     <Text style={styles.locButtonText}>
                       {userLocation
                         ? `Lat: ${userLocation.lat.toFixed(3)}, Lng: ${userLocation.lng.toFixed(3)}`
@@ -322,9 +324,10 @@ export default function MyTeamsScreen() {
                 style={[styles.submitBtn, creating && styles.btnDisabled]}
                 onPress={handleCreateTeam}
                 disabled={creating}
+                activeOpacity={0.85}
               >
                 {creating ? (
-                  <ActivityIndicator color="#0F172A" />
+                  <ActivityIndicator color={Colors.primaryText} />
                 ) : (
                   <Text style={styles.submitBtnText}>Create Team</Text>
                 )}
@@ -340,7 +343,7 @@ export default function MyTeamsScreen() {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: '#090D16',
+    backgroundColor: Colors.background,
   },
   container: {
     flex: 1,
@@ -355,10 +358,10 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 22,
     fontWeight: '800',
-    color: '#F8FAFC',
+    color: Colors.text,
   },
   createBtn: {
-    backgroundColor: '#10B981',
+    backgroundColor: Colors.primary,
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: 14,
@@ -367,20 +370,25 @@ const styles = StyleSheet.create({
     gap: 4,
   },
   createBtnText: {
-    color: '#0F172A',
+    color: Colors.primaryText,
     fontWeight: '700',
     fontSize: 13,
   },
   listContainer: {
-    paddingBottom: 20,
+    paddingBottom: 24,
     gap: 12,
   },
   teamCard: {
-    backgroundColor: '#1E293B',
+    backgroundColor: Colors.card,
     borderRadius: 16,
     padding: 16,
     borderWidth: 1,
-    borderColor: '#334155',
+    borderColor: Colors.border,
+    shadowColor: Colors.navy,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.04,
+    shadowRadius: 6,
+    elevation: 2,
   },
   cardTop: {
     flexDirection: 'row',
@@ -390,19 +398,19 @@ const styles = StyleSheet.create({
     width: 44,
     height: 44,
     borderRadius: 22,
-    backgroundColor: '#0F172A',
+    backgroundColor: Colors.tealLight,
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: 1,
-    borderColor: '#334155',
+    borderColor: '#C7E5DC',
   },
   teamIconText: {
     fontSize: 20,
   },
   teamNameText: {
-    fontSize: 17,
+    fontSize: 16,
     fontWeight: '700',
-    color: '#F8FAFC',
+    color: Colors.text,
     marginBottom: 4,
   },
   daysRow: {
@@ -411,13 +419,15 @@ const styles = StyleSheet.create({
     gap: 4,
   },
   dayTag: {
-    backgroundColor: '#0F172A',
+    backgroundColor: Colors.tealLight,
     paddingHorizontal: 8,
     paddingVertical: 2,
     borderRadius: 6,
+    borderWidth: 1,
+    borderColor: '#D0EAE2',
   },
   dayTagText: {
-    color: '#94A3B8',
+    color: Colors.tealText,
     fontSize: 11,
     fontWeight: '600',
   },
@@ -428,7 +438,7 @@ const styles = StyleSheet.create({
     marginTop: 14,
     paddingTop: 10,
     borderTopWidth: 1,
-    borderTopColor: '#334155',
+    borderTopColor: '#EDEBE6',
   },
   statusPill: {
     flexDirection: 'row',
@@ -439,12 +449,10 @@ const styles = StyleSheet.create({
     gap: 6,
   },
   statusActive: {
-    backgroundColor: '#064E3B',
+    backgroundColor: Colors.tealLight,
   },
   statusInactive: {
-    backgroundColor: '#1E293B',
-    borderWidth: 1,
-    borderColor: '#475569',
+    backgroundColor: Colors.errorLight,
   },
   dot: {
     width: 6,
@@ -452,9 +460,14 @@ const styles = StyleSheet.create({
     borderRadius: 3,
   },
   statusText: {
-    color: '#CBD5E1',
     fontSize: 12,
     fontWeight: '600',
+  },
+  statusActiveText: {
+    color: Colors.tealText,
+  },
+  statusInactiveText: {
+    color: Colors.error,
   },
   roleBadge: {
     paddingHorizontal: 10,
@@ -462,20 +475,24 @@ const styles = StyleSheet.create({
     borderRadius: 12,
   },
   captainBadge: {
-    backgroundColor: '#78350F',
+    backgroundColor: Colors.amberLight,
+    borderWidth: 1,
+    borderColor: '#F3DFC1',
   },
   memberBadge: {
-    backgroundColor: '#0F172A',
+    backgroundColor: Colors.secondary,
+    borderWidth: 1,
+    borderColor: Colors.border,
   },
   roleText: {
     fontSize: 12,
     fontWeight: '700',
   },
   captainText: {
-    color: '#FBBF24',
+    color: Colors.amber,
   },
   memberText: {
-    color: '#94A3B8',
+    color: Colors.textSecondary,
   },
   emptyState: {
     alignItems: 'center',
@@ -487,41 +504,41 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   emptyTitle: {
-    fontSize: 20,
+    fontSize: 18,
     fontWeight: '700',
-    color: '#F8FAFC',
+    color: Colors.text,
     marginBottom: 6,
   },
   emptySubtitle: {
     fontSize: 14,
-    color: '#94A3B8',
+    color: Colors.textSecondary,
     textAlign: 'center',
     paddingHorizontal: 30,
     marginBottom: 20,
   },
   emptyCreateBtn: {
-    backgroundColor: '#10B981',
+    backgroundColor: Colors.primary,
     paddingHorizontal: 20,
     paddingVertical: 12,
-    borderRadius: 12,
+    borderRadius: 11,
   },
   emptyCreateBtnText: {
-    color: '#0F172A',
+    color: Colors.primaryText,
     fontWeight: '700',
     fontSize: 14,
   },
   modalOverlay: {
     flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.7)',
+    backgroundColor: 'rgba(23, 34, 53, 0.6)',
     justifyContent: 'flex-end',
   },
   modalContent: {
-    backgroundColor: '#1E293B',
-    borderTopLeftRadius: 24,
-    borderTopRightRadius: 24,
+    backgroundColor: Colors.card,
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
     padding: 24,
     borderWidth: 1,
-    borderColor: '#334155',
+    borderColor: Colors.border,
   },
   modalHeader: {
     flexDirection: 'row',
@@ -532,37 +549,37 @@ const styles = StyleSheet.create({
   modalTitle: {
     fontSize: 20,
     fontWeight: '800',
-    color: '#F8FAFC',
+    color: Colors.text,
   },
   inputLabel: {
-    color: '#CBD5E1',
+    color: Colors.text,
     fontSize: 13,
     fontWeight: '600',
     marginBottom: 6,
     marginTop: 12,
   },
   input: {
-    backgroundColor: '#0F172A',
+    backgroundColor: Colors.surface,
     borderWidth: 1,
-    borderColor: '#334155',
-    borderRadius: 12,
+    borderColor: Colors.border,
+    borderRadius: 10,
     paddingHorizontal: 14,
     paddingVertical: 12,
-    color: '#F8FAFC',
+    color: Colors.text,
     fontSize: 15,
   },
   locButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#0F172A',
+    backgroundColor: Colors.tealLight,
     borderWidth: 1,
-    borderColor: '#064E3B',
-    borderRadius: 12,
+    borderColor: '#C7E5DC',
+    borderRadius: 10,
     padding: 14,
     gap: 8,
   },
   locButtonText: {
-    color: '#34D399',
+    color: Colors.tealText,
     fontSize: 13,
     fontWeight: '600',
   },
@@ -574,38 +591,38 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   dayPickBtn: {
-    backgroundColor: '#0F172A',
+    backgroundColor: Colors.surface,
     borderWidth: 1,
-    borderColor: '#334155',
+    borderColor: Colors.border,
     borderRadius: 8,
     paddingHorizontal: 12,
     paddingVertical: 8,
   },
   dayPickBtnActive: {
-    backgroundColor: '#064E3B',
-    borderColor: '#10B981',
+    backgroundColor: Colors.tealLight,
+    borderColor: Colors.primary,
   },
   dayPickText: {
-    color: '#64748B',
+    color: Colors.textSecondary,
     fontSize: 13,
     fontWeight: '600',
   },
   dayPickTextActive: {
-    color: '#34D399',
+    color: Colors.tealText,
   },
   submitBtn: {
-    backgroundColor: '#10B981',
-    borderRadius: 12,
-    paddingVertical: 16,
+    backgroundColor: Colors.primary,
+    borderRadius: 11,
+    paddingVertical: 14,
     alignItems: 'center',
     marginTop: 12,
   },
   btnDisabled: {
-    opacity: 0.7,
+    opacity: 0.65,
   },
   submitBtnText: {
-    color: '#0F172A',
+    color: Colors.primaryText,
     fontWeight: '700',
-    fontSize: 16,
+    fontSize: 15,
   },
 });

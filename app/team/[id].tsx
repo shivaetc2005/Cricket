@@ -16,6 +16,7 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useAuth } from '../../context/AuthContext';
 import { supabase } from '../../lib/supabase';
+import { Colors } from '../../theme/colors';
 
 interface MemberProfile {
   id: string;
@@ -233,7 +234,7 @@ export default function TeamDetailScreen() {
   if (loading) {
     return (
       <SafeAreaView style={styles.safeArea}>
-        <ActivityIndicator style={{ marginTop: 40 }} color="#10B981" size="large" />
+        <ActivityIndicator style={{ marginTop: 40 }} color={Colors.primary} size="large" />
       </SafeAreaView>
     );
   }
@@ -250,13 +251,20 @@ export default function TeamDetailScreen() {
 
   return (
     <SafeAreaView style={styles.safeArea}>
-      <Stack.Screen options={{ title: team.name, headerStyle: { backgroundColor: '#0F172A' }, headerTintColor: '#F8FAFC' }} />
+      <Stack.Screen
+        options={{
+          title: team.name,
+          headerStyle: { backgroundColor: Colors.navy },
+          headerTintColor: '#FFFFFF',
+          headerTitleStyle: { fontWeight: '700' },
+        }}
+      />
       <ScrollView contentContainerStyle={styles.container}>
         {/* Team Banner Header */}
         <View style={styles.headerCard}>
           <View style={styles.headerTop}>
             <View style={styles.shieldIcon}>
-              <Text style={{ fontSize: 32 }}>🛡️</Text>
+              <Text style={{ fontSize: 28 }}>🛡️</Text>
             </View>
             <View style={{ flex: 1, marginLeft: 16 }}>
               <Text style={styles.teamTitle}>{team.name}</Text>
@@ -271,8 +279,8 @@ export default function TeamDetailScreen() {
                 team.status === 'active' ? styles.statusActive : styles.statusInactive,
               ]}
             >
-              <Text style={styles.statusBadgeText}>
-                {team.status === 'active' ? '🟢 Active & Ready to Play' : '🔴 Inactive'}
+              <Text style={[styles.statusBadgeText, team.status === 'active' ? styles.statusActiveText : styles.statusInactiveText]}>
+                {team.status === 'active' ? '● Active & Ready to Play' : '● Inactive'}
               </Text>
             </View>
 
@@ -281,12 +289,13 @@ export default function TeamDetailScreen() {
                 style={styles.toggleBtn}
                 onPress={handleToggleStatus}
                 disabled={updatingStatus}
+                activeOpacity={0.8}
               >
                 {updatingStatus ? (
-                  <ActivityIndicator size="small" color="#F8FAFC" />
+                  <ActivityIndicator size="small" color={Colors.text} />
                 ) : (
                   <Text style={styles.toggleBtnText}>
-                    Toggle {team.status === 'active' ? 'Inactive' : 'Active'}
+                    Make {team.status === 'active' ? 'Inactive' : 'Active'}
                   </Text>
                 )}
               </TouchableOpacity>
@@ -294,8 +303,8 @@ export default function TeamDetailScreen() {
           </View>
 
           {!isCaptain && (
-            <TouchableOpacity style={styles.messageBtn} onPress={handleStartConversation}>
-              <Ionicons name="chatbubbles-outline" size={20} color="#0F172A" />
+            <TouchableOpacity style={styles.messageBtn} onPress={handleStartConversation} activeOpacity={0.85}>
+              <Ionicons name="chatbubbles-outline" size={18} color={Colors.primaryText} />
               <Text style={styles.messageBtnText}>Message Team Captain</Text>
             </TouchableOpacity>
           )}
@@ -397,7 +406,7 @@ export default function TeamDetailScreen() {
             <View style={styles.modalHeader}>
               <Text style={styles.modalTitle}>Add Player to {team.name}</Text>
               <TouchableOpacity onPress={() => setAddModalVisible(false)}>
-                <Ionicons name="close" size={24} color="#94A3B8" />
+                <Ionicons name="close" size={24} color={Colors.textSecondary} />
               </TouchableOpacity>
             </View>
 
@@ -406,16 +415,16 @@ export default function TeamDetailScreen() {
               <TextInput
                 style={[styles.input, { flex: 1 }]}
                 placeholder="e.g. Rahul or 555-0199"
-                placeholderTextColor="#64748B"
+                placeholderTextColor={Colors.textSecondary}
                 value={searchQuery}
                 onChangeText={setSearchQuery}
                 onSubmitEditing={handleSearchUsers}
               />
-              <TouchableOpacity style={styles.searchBtn} onPress={handleSearchUsers}>
+              <TouchableOpacity style={styles.searchBtn} onPress={handleSearchUsers} activeOpacity={0.8}>
                 {searching ? (
-                  <ActivityIndicator size="small" color="#0F172A" />
+                  <ActivityIndicator size="small" color={Colors.primaryText} />
                 ) : (
-                  <Ionicons name="search" size={20} color="#0F172A" />
+                  <Ionicons name="search" size={18} color={Colors.primaryText} />
                 )}
               </TouchableOpacity>
             </View>
@@ -439,9 +448,10 @@ export default function TeamDetailScreen() {
                     style={styles.addBtn}
                     onPress={() => handleAddMember(item)}
                     disabled={addingUserId === item.id}
+                    activeOpacity={0.8}
                   >
                     {addingUserId === item.id ? (
-                      <ActivityIndicator size="small" color="#0F172A" />
+                      <ActivityIndicator size="small" color={Colors.primaryText} />
                     ) : (
                       <Text style={styles.addBtnText}>+ Add</Text>
                     )}
@@ -459,7 +469,7 @@ export default function TeamDetailScreen() {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: '#090D16',
+    backgroundColor: Colors.background,
   },
   container: {
     padding: 16,
@@ -469,38 +479,43 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   notFoundText: {
-    color: '#94A3B8',
+    color: Colors.textSecondary,
     fontSize: 16,
   },
   headerCard: {
-    backgroundColor: '#1E293B',
-    borderRadius: 20,
+    backgroundColor: Colors.card,
+    borderRadius: 16,
     padding: 20,
     borderWidth: 1,
-    borderColor: '#334155',
+    borderColor: Colors.border,
     marginBottom: 16,
+    shadowColor: Colors.navy,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.04,
+    shadowRadius: 6,
+    elevation: 2,
   },
   headerTop: {
     flexDirection: 'row',
     alignItems: 'center',
   },
   shieldIcon: {
-    width: 60,
-    height: 60,
-    borderRadius: 30,
-    backgroundColor: '#0F172A',
-    borderWidth: 2,
-    borderColor: '#10B981',
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    backgroundColor: Colors.tealLight,
+    borderWidth: 1.5,
+    borderColor: '#C7E5DC',
     alignItems: 'center',
     justifyContent: 'center',
   },
   teamTitle: {
-    fontSize: 24,
+    fontSize: 22,
     fontWeight: '800',
-    color: '#F8FAFC',
+    color: Colors.text,
   },
   captainSub: {
-    color: '#FBBF24',
+    color: Colors.amber,
     fontSize: 13,
     fontWeight: '600',
     marginTop: 4,
@@ -512,57 +527,69 @@ const styles = StyleSheet.create({
     marginTop: 16,
     paddingTop: 12,
     borderTopWidth: 1,
-    borderTopColor: '#334155',
+    borderTopColor: '#EDEBE6',
   },
   statusBadge: {
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 12,
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 10,
   },
   statusActive: {
-    backgroundColor: '#064E3B',
+    backgroundColor: Colors.tealLight,
   },
   statusInactive: {
-    backgroundColor: '#450A0A',
+    backgroundColor: Colors.errorLight,
   },
   statusBadgeText: {
-    color: '#F8FAFC',
     fontSize: 12,
     fontWeight: '700',
   },
+  statusActiveText: {
+    color: Colors.tealText,
+  },
+  statusInactiveText: {
+    color: Colors.error,
+  },
   toggleBtn: {
-    backgroundColor: '#334155',
+    backgroundColor: Colors.secondary,
+    borderWidth: 1,
+    borderColor: Colors.border,
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: 10,
   },
   toggleBtnText: {
-    color: '#F8FAFC',
+    color: Colors.text,
     fontSize: 12,
     fontWeight: '600',
   },
   messageBtn: {
-    backgroundColor: '#10B981',
+    backgroundColor: Colors.primary,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    borderRadius: 12,
+    borderRadius: 11,
     paddingVertical: 14,
     marginTop: 16,
     gap: 8,
   },
   messageBtnText: {
-    color: '#0F172A',
+    color: Colors.primaryText,
     fontWeight: '700',
     fontSize: 15,
   },
   card: {
-    backgroundColor: '#1E293B',
+    backgroundColor: Colors.card,
     borderRadius: 16,
     padding: 18,
     borderWidth: 1,
-    borderColor: '#334155',
+    borderColor: Colors.border,
     marginBottom: 16,
+    shadowColor: Colors.navy,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.04,
+    shadowRadius: 6,
+    elevation: 2,
   },
   cardHeader: {
     flexDirection: 'row',
@@ -573,10 +600,10 @@ const styles = StyleSheet.create({
   cardTitle: {
     fontSize: 17,
     fontWeight: '700',
-    color: '#F8FAFC',
+    color: Colors.text,
   },
   editLink: {
-    color: '#34D399',
+    color: Colors.primary,
     fontWeight: '600',
     fontSize: 13,
   },
@@ -587,34 +614,34 @@ const styles = StyleSheet.create({
     marginVertical: 10,
   },
   dayChip: {
-    backgroundColor: '#0F172A',
+    backgroundColor: Colors.surface,
     borderWidth: 1,
-    borderColor: '#334155',
+    borderColor: Colors.border,
     borderRadius: 8,
     paddingHorizontal: 12,
     paddingVertical: 8,
   },
   dayChipActive: {
-    backgroundColor: '#064E3B',
-    borderColor: '#10B981',
+    backgroundColor: Colors.tealLight,
+    borderColor: Colors.primary,
   },
   dayChipText: {
-    color: '#64748B',
+    color: Colors.textSecondary,
     fontSize: 13,
     fontWeight: '600',
   },
   dayChipTextActive: {
-    color: '#34D399',
+    color: Colors.tealText,
   },
   saveDaysBtn: {
-    backgroundColor: '#10B981',
+    backgroundColor: Colors.primary,
     borderRadius: 10,
     paddingVertical: 12,
     alignItems: 'center',
     marginTop: 8,
   },
   saveDaysBtnText: {
-    color: '#0F172A',
+    color: Colors.primaryText,
     fontWeight: '700',
     fontSize: 14,
   },
@@ -624,20 +651,20 @@ const styles = StyleSheet.create({
     gap: 6,
   },
   dayTag: {
-    backgroundColor: '#064E3B',
+    backgroundColor: Colors.tealLight,
     borderWidth: 1,
-    borderColor: '#10B981',
+    borderColor: '#C7E5DC',
     paddingHorizontal: 10,
     paddingVertical: 4,
     borderRadius: 8,
   },
   dayTagText: {
-    color: '#34D399',
+    color: Colors.tealText,
     fontSize: 12,
     fontWeight: '600',
   },
   emptyText: {
-    color: '#64748B',
+    color: Colors.textSecondary,
     fontSize: 14,
     fontStyle: 'italic',
   },
@@ -647,7 +674,7 @@ const styles = StyleSheet.create({
     gap: 4,
   },
   addMemberBtnText: {
-    color: '#34D399',
+    color: Colors.primary,
     fontSize: 13,
     fontWeight: '600',
   },
@@ -656,56 +683,58 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: 10,
     borderBottomWidth: 1,
-    borderBottomColor: '#334155',
+    borderBottomColor: '#EDEBE6',
   },
   memberAvatar: {
     width: 36,
     height: 36,
     borderRadius: 18,
-    backgroundColor: '#0F172A',
+    backgroundColor: Colors.tealLight,
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: 1,
-    borderColor: '#334155',
+    borderColor: '#C7E5DC',
   },
   avatarLetter: {
-    color: '#F8FAFC',
-    fontSize: 16,
+    color: Colors.tealText,
+    fontSize: 15,
     fontWeight: '700',
   },
   memberName: {
-    color: '#F8FAFC',
+    color: Colors.text,
     fontSize: 15,
     fontWeight: '600',
   },
   memberSkill: {
-    color: '#94A3B8',
+    color: Colors.textSecondary,
     fontSize: 12,
     marginTop: 2,
   },
   captainTag: {
-    backgroundColor: '#78350F',
+    backgroundColor: Colors.amberLight,
+    borderWidth: 1,
+    borderColor: '#F3DFC1',
     paddingHorizontal: 8,
     paddingVertical: 2,
     borderRadius: 8,
   },
   captainTagText: {
-    color: '#FBBF24',
+    color: Colors.amber,
     fontSize: 11,
     fontWeight: '700',
   },
   modalOverlay: {
     flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.7)',
+    backgroundColor: 'rgba(23, 34, 53, 0.6)',
     justifyContent: 'flex-end',
   },
   modalContent: {
-    backgroundColor: '#1E293B',
-    borderTopLeftRadius: 24,
-    borderTopRightRadius: 24,
+    backgroundColor: Colors.card,
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
     padding: 24,
     borderWidth: 1,
-    borderColor: '#334155',
+    borderColor: Colors.border,
   },
   modalHeader: {
     flexDirection: 'row',
@@ -716,10 +745,10 @@ const styles = StyleSheet.create({
   modalTitle: {
     fontSize: 18,
     fontWeight: '800',
-    color: '#F8FAFC',
+    color: Colors.text,
   },
   inputLabel: {
-    color: '#CBD5E1',
+    color: Colors.text,
     fontSize: 13,
     fontWeight: '600',
     marginBottom: 6,
@@ -729,17 +758,17 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   input: {
-    backgroundColor: '#0F172A',
+    backgroundColor: Colors.surface,
     borderWidth: 1,
-    borderColor: '#334155',
+    borderColor: Colors.border,
     borderRadius: 10,
     paddingHorizontal: 14,
     paddingVertical: 10,
-    color: '#F8FAFC',
+    color: Colors.text,
     fontSize: 14,
   },
   searchBtn: {
-    backgroundColor: '#10B981',
+    backgroundColor: Colors.primary,
     borderRadius: 10,
     width: 44,
     alignItems: 'center',
@@ -751,25 +780,25 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: 10,
     borderBottomWidth: 1,
-    borderBottomColor: '#334155',
+    borderBottomColor: '#EDEBE6',
   },
   resultName: {
-    color: '#F8FAFC',
+    color: Colors.text,
     fontSize: 15,
     fontWeight: '600',
   },
   resultPhone: {
-    color: '#94A3B8',
+    color: Colors.textSecondary,
     fontSize: 12,
   },
   addBtn: {
-    backgroundColor: '#10B981',
+    backgroundColor: Colors.primary,
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: 8,
   },
   addBtnText: {
-    color: '#0F172A',
+    color: Colors.primaryText,
     fontSize: 13,
     fontWeight: '700',
   },

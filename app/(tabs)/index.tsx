@@ -12,6 +12,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { supabase } from '../../lib/supabase';
+import { Colors } from '../../theme/colors';
 
 interface NearbyTeam {
   id: string;
@@ -212,13 +213,13 @@ export default function ExploreScreen() {
                     : 'Acquiring GPS signal...'}
             </Text>
           </View>
-          <TouchableOpacity style={styles.refreshBtn} onPress={() => { initLocation(); fetchNearbyTeams(); }}>
-            <Ionicons name="refresh" size={18} color="#0F172A" />
+          <TouchableOpacity style={styles.refreshBtn} onPress={() => { initLocation(); fetchNearbyTeams(); }} activeOpacity={0.8}>
+            <Ionicons name="refresh" size={18} color={Colors.primaryText} />
           </TouchableOpacity>
         </View>
 
         {loading ? (
-          <ActivityIndicator style={{ marginTop: 40 }} color="#10B981" size="large" />
+          <ActivityIndicator style={{ marginTop: 40 }} color={Colors.primary} size="large" />
         ) : (
           <FlatList
             data={teams}
@@ -230,20 +231,17 @@ export default function ExploreScreen() {
               <View style={styles.emptyState}>
                 <Text style={styles.emptyEmoji}>🏏</Text>
                 <Text style={styles.emptyTitle}>No Active Teams Nearby</Text>
-                {/* <Text style={styles.emptySubtitle}>
-                  No active cricket teams were found within 3km of your location.
-                </Text> */}
               </View>
             }
             renderItem={({ item }) => (
               <TouchableOpacity
                 style={styles.card}
-                activeOpacity={0.8}
+                activeOpacity={0.85}
                 onPress={() => router.push(`/team/${item.id}` as any)}
               >
                 <View style={styles.cardHeader}>
                   <View style={styles.teamIconBox}>
-                    <Text style={{ fontSize: 22 }}>🛡️</Text>
+                    <Text style={{ fontSize: 20 }}>🛡️</Text>
                   </View>
                   <View style={{ flex: 1, marginLeft: 12 }}>
                     <Text style={styles.teamName}>{item.name}</Text>
@@ -255,14 +253,14 @@ export default function ExploreScreen() {
                       item.status === 'active' ? styles.statusActive : styles.statusInactive,
                     ]}
                   >
-                    <Text style={styles.statusText}>
+                    <Text style={[styles.statusText, item.status === 'active' ? styles.statusActiveText : styles.statusInactiveText]}>
                       {item.status === 'active' ? 'Active' : 'Inactive'}
                     </Text>
                   </View>
                 </View>
 
                 <View style={styles.cardFooter}>
-                  <Text style={styles.daysLabel}>Available Days:</Text>
+                  <Text style={styles.daysLabel}>Available:</Text>
                   <View style={styles.daysRow}>
                     {item.available_days && item.available_days.length > 0 ? (
                       item.available_days.map((day) => (
@@ -287,34 +285,39 @@ export default function ExploreScreen() {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: '#090D16',
+    backgroundColor: Colors.background,
   },
   container: {
     flex: 1,
     padding: 16,
   },
   banner: {
-    backgroundColor: '#1E293B',
+    backgroundColor: Colors.card,
     borderRadius: 14,
     padding: 14,
     borderWidth: 1,
-    borderColor: '#334155',
+    borderColor: Colors.border,
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: 16,
+    shadowColor: Colors.navy,
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.04,
+    shadowRadius: 4,
+    elevation: 1,
   },
   bannerTitle: {
-    color: '#F8FAFC',
+    color: Colors.text,
     fontSize: 15,
     fontWeight: '700',
   },
   bannerSub: {
-    color: '#94A3B8',
+    color: Colors.textSecondary,
     fontSize: 12,
     marginTop: 2,
   },
   refreshBtn: {
-    backgroundColor: '#10B981',
+    backgroundColor: Colors.primary,
     width: 36,
     height: 36,
     borderRadius: 18,
@@ -322,69 +325,80 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   list: {
-    paddingBottom: 20,
+    paddingBottom: 24,
     gap: 12,
   },
   card: {
-    backgroundColor: '#1E293B',
+    backgroundColor: Colors.card,
     borderRadius: 16,
     padding: 16,
     borderWidth: 1,
-    borderColor: '#334155',
+    borderColor: Colors.border,
+    shadowColor: Colors.navy,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.04,
+    shadowRadius: 6,
+    elevation: 2,
   },
   cardHeader: {
     flexDirection: 'row',
     alignItems: 'center',
   },
   teamIconBox: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
-    backgroundColor: '#0F172A',
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: Colors.tealLight,
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: 1,
-    borderColor: '#334155',
+    borderColor: '#C7E5DC',
   },
   teamName: {
-    fontSize: 17,
+    fontSize: 16,
     fontWeight: '700',
-    color: '#F8FAFC',
+    color: Colors.text,
   },
   distText: {
     fontSize: 13,
-    color: '#34D399',
+    color: Colors.primary,
     fontWeight: '600',
     marginTop: 2,
   },
   statusBadge: {
-    paddingHorizontal: 10,
+    paddingHorizontal: 9,
     paddingVertical: 4,
     borderRadius: 10,
   },
   statusActive: {
-    backgroundColor: '#064E3B',
+    backgroundColor: Colors.tealLight,
   },
   statusInactive: {
-    backgroundColor: '#450A0A',
+    backgroundColor: Colors.errorLight,
   },
   statusText: {
-    color: '#F8FAFC',
     fontSize: 11,
     fontWeight: '700',
+  },
+  statusActiveText: {
+    color: Colors.tealText,
+  },
+  statusInactiveText: {
+    color: Colors.error,
   },
   cardFooter: {
     marginTop: 12,
     paddingTop: 10,
     borderTopWidth: 1,
-    borderTopColor: '#334155',
+    borderTopColor: '#EDEBE6',
     flexDirection: 'row',
     alignItems: 'center',
     gap: 8,
   },
   daysLabel: {
-    color: '#94A3B8',
+    color: Colors.textSecondary,
     fontSize: 12,
+    fontWeight: '500',
   },
   daysRow: {
     flexDirection: 'row',
@@ -392,18 +406,20 @@ const styles = StyleSheet.create({
     gap: 4,
   },
   dayChip: {
-    backgroundColor: '#064E3B',
+    backgroundColor: Colors.tealLight,
     paddingHorizontal: 8,
-    paddingVertical: 2,
+    paddingVertical: 3,
     borderRadius: 6,
+    borderWidth: 1,
+    borderColor: '#D0EAE2',
   },
   dayChipText: {
-    color: '#34D399',
+    color: Colors.tealText,
     fontSize: 11,
     fontWeight: '600',
   },
   noDaysText: {
-    color: '#64748B',
+    color: Colors.textSecondary,
     fontSize: 12,
     fontStyle: 'italic',
   },
@@ -417,26 +433,26 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   emptyTitle: {
-    fontSize: 20,
+    fontSize: 18,
     fontWeight: '700',
-    color: '#F8FAFC',
+    color: Colors.text,
     marginBottom: 6,
   },
   emptySubtitle: {
     fontSize: 14,
-    color: '#94A3B8',
+    color: Colors.textSecondary,
     textAlign: 'center',
     paddingHorizontal: 30,
     marginBottom: 20,
   },
   increaseBtn: {
-    backgroundColor: '#10B981',
+    backgroundColor: Colors.primary,
     paddingHorizontal: 18,
     paddingVertical: 12,
-    borderRadius: 12,
+    borderRadius: 11,
   },
   increaseBtnText: {
-    color: '#0F172A',
+    color: Colors.primaryText,
     fontWeight: '700',
     fontSize: 14,
   },
