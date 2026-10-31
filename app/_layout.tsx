@@ -40,6 +40,26 @@ function InitialLayout() {
       <Stack.Screen name="(auth)" options={{ headerShown: false }} />
       <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
       <Stack.Screen name="modal" options={{ presentation: 'modal' }} />
+      <Stack.Screen
+        name="team/[id]"
+        options={{
+          headerShown: true,
+          headerStyle: { backgroundColor: Colors.navy },
+          headerTintColor: '#FFFFFF',
+          headerTitleStyle: { fontWeight: '700', color: '#FFFFFF' },
+          headerBackTitle: 'Back',
+        }}
+      />
+      <Stack.Screen
+        name="conversation/[id]"
+        options={{
+          headerShown: true,
+          headerStyle: { backgroundColor: Colors.navy },
+          headerTintColor: '#FFFFFF',
+          headerTitleStyle: { fontWeight: '700', color: '#FFFFFF' },
+          headerBackTitle: 'Back',
+        }}
+      />
     </Stack>
   );
 }
